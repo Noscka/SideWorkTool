@@ -146,6 +146,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SWT.cpp" />
+    <ClCompile Include="TinyExpr\tinyexpr.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TinyExpr\tinyexpr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

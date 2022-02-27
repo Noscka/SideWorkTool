@@ -4,7 +4,14 @@
 #include <Windows.h>
 #include <WinUser.h>
 
+#include "./TinyExpr/tinyexpr.h"
+
+// If Program is enabled
 bool Enabled = true;
+
+// Equation Char Array
+char Equation[20] = {};
+int EquationArrayIndex = 0; // Equation Array Index
 
 // Hook Variable
 HHOOK _hook;
@@ -12,6 +19,35 @@ HHOOK _hook;
 // This struct contains the data received by the hook callback. As you see in the callback function
 // it contains the thing you will need: vkCode = virtual key code.
 KBDLLHOOKSTRUCT kbdStruct;
+
+COORD GetConsoleCursorPosition(HANDLE hConsoleOutput)
+{
+	CONSOLE_SCREEN_BUFFER_INFO cbsi;
+	if(GetConsoleScreenBufferInfo(hConsoleOutput, &cbsi))
+	{
+		return cbsi.dwCursorPosition;
+	}
+	else
+	{
+		// The function failed. Call GetLastError() for details.
+		return {0, 0};
+	}
+}
+
+bool AddToEquation(char Character)
+{
+	try
+	{
+		Equation[EquationArrayIndex] = Character;
+		EquationArrayIndex++;
+	}
+	catch(...)
+	{
+		return false;
+	}
+	return true;
+}
+
 
 LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -29,7 +65,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 				BYTE KeyboardState[256] = {};
 
 				// UnicodeCharacter output from ToUnicodeEx
-				wchar_t UnicodeCharacter[5] = {};
+				wchar_t UnicodeCharacter[3] = {};
 
 				// Get keystate from Shift and alt when getting keyboardstate
 				GetKeyState(VK_SHIFT);
@@ -39,6 +75,9 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 				// Get the key hit while taking into account the modifiers (shift+/ -> ?)
 				ToUnicodeEx((UINT)kbdStruct.vkCode, (UINT)kbdStruct.scanCode, KeyboardState, UnicodeCharacter, sizeof(UnicodeCharacter) / sizeof(*UnicodeCharacter) - 1, (UINT)kbdStruct.flags, GetKeyboardLayout(0));
 
+				// Coord for backspace cursor position editing
+				COORD NewCoord;
+				
 				switch(UnicodeCharacter[0])
 				{
 				case 48: // 0
@@ -51,36 +90,55 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 				case 55: // 7
 				case 56: // 8
 				case 57: // 9
-					std::wcout << UnicodeCharacter << '\n';
+					std::wcout << UnicodeCharacter;
+					AddToEquation(UnicodeCharacter[0]);
 					return -1;
 
 				case 8: // {BACKSPACE}
-					printf("{Backspace}\n");
-					break;
+					if(EquationArrayIndex > 0)
+					{
+						NewCoord = {GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X, GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y};
+						NewCoord.X -= 1;
+						SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord);
+						printf(" ");
+						SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord);
+						EquationArrayIndex--;
+					}
+
+					Equation[EquationArrayIndex] = NULL;
+					return -1;
 
 				case 13: // {ENTER}
-					printf("{Enter}\n");
-					break;
+					std::cout << Equation << " = " << te_interp(Equation, 0) << "\n";
+					return -1;
 
 				case 47: // /
-					printf("/ - {DIVIDE}\n");
-					break;
+					printf("/");
+					AddToEquation(UnicodeCharacter[0]);
+					return -1;
+
 				case 43: // +
-					printf("+ - {PLUS}\n");
-					break;
+					printf("+");
+					AddToEquation(UnicodeCharacter[0]);
+					return -1;
+
 				case 45: // -
-					printf("- - {MINUS}\n");
-					break;
+					printf("-");
+					AddToEquation(UnicodeCharacter[0]);
+					return -1;
+
 				case 42: // *
-					printf("* - {MULTIPLY}\n");
-					break;
+					printf("*");
+					AddToEquation(UnicodeCharacter[0]);
+					return -1;
+
 				case 61: // =
-					printf("= - {EQUALS}\n");
-					break;
+					std::cout << Equation << " = " << te_interp(Equation, 0);
+					return -1;
 
 				default:
-					std::wcout << "ToUnicodeEx: " << UnicodeCharacter << '\n';
-					std::wcout << "ToUnicodeEx INT: " << (int)UnicodeCharacter[0] << '\n';
+					//std::wcout << "ToUnicodeEx: " << UnicodeCharacter << '\n';
+					//std::wcout << "ToUnicodeEx INT: " << (int)UnicodeCharacter[0] << '\n';
 					break;
 				}
 			}
