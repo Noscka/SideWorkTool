@@ -3,6 +3,7 @@
 #include <tchar.h>
 #include <Windows.h>
 #include <WinUser.h>
+#include <string>
 
 #include "./TinyExpr/tinyexpr.h"
 
@@ -11,7 +12,7 @@ bool Enabled = true;
 
 // Equation Char Array
 char Equation[20] = {};
-int EquationArrayIndex = 0; // Equation Array Index
+int EquationArrayIndexPointer = 0; // Equation Array Index Pointer
 
 // Hook Variable
 HHOOK _hook;
@@ -38,8 +39,8 @@ bool AddToEquation(char Character)
 {
 	try
 	{
-		Equation[EquationArrayIndex] = Character;
-		EquationArrayIndex++;
+		Equation[EquationArrayIndexPointer] = Character;
+		EquationArrayIndexPointer++;
 	}
 	catch(...)
 	{
@@ -48,6 +49,17 @@ bool AddToEquation(char Character)
 	return true;
 }
 
+void clear_screen(char fill = ' ')
+{
+	COORD tl = {0,0};
+	CONSOLE_SCREEN_BUFFER_INFO s;
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+	GetConsoleScreenBufferInfo(console, &s);
+	DWORD written, cells = s.dwSize.X * s.dwSize.Y;
+	FillConsoleOutputCharacter(console, fill, cells, tl, &written);
+	FillConsoleOutputAttribute(console, s.wAttributes, cells, tl, &written);
+	SetConsoleCursorPosition(console, tl);
+}
 
 LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -57,6 +69,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 		{
 			switch(wParam)
 			{
+			// if keydown hook event (allows for holding and "spamming" key)
 			case WM_KEYDOWN:
 				// lParam is the pointer to the struct containing the data needed, so cast and assign it to kdbStruct.
 				kbdStruct = *((KBDLLHOOKSTRUCT*)lParam);
@@ -72,12 +85,12 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 				GetKeyState(VK_MENU);
 				GetKeyboardState(KeyboardState);
 
-				// Get the key hit while taking into account the modifiers (shift+/ -> ?)
+				// Get the key hit while taking into account the modifiers (shift+5 -> %)
 				ToUnicodeEx((UINT)kbdStruct.vkCode, (UINT)kbdStruct.scanCode, KeyboardState, UnicodeCharacter, sizeof(UnicodeCharacter) / sizeof(*UnicodeCharacter) - 1, (UINT)kbdStruct.flags, GetKeyboardLayout(0));
 
 				// Coord for backspace cursor position editing
 				COORD NewCoord;
-				
+
 				switch(UnicodeCharacter[0])
 				{
 				case 48: // 0
@@ -95,21 +108,16 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 					return -1;
 
 				case 8: // {BACKSPACE}
-					if(EquationArrayIndex > 0)
+					if(EquationArrayIndexPointer > 0)
 					{
-						NewCoord = {GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X, GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y};
-						NewCoord.X -= 1;
-						SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord);
-						printf(" ");
-						SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord);
-						EquationArrayIndex--;
+						NewCoord = {(SHORT)(GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y}; // create new coord with x-1 and same y
+						SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // use new coord
+						printf(" "); // delete character
+						SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // go back 1 space
+						EquationArrayIndexPointer--;
 					}
 
-					Equation[EquationArrayIndex] = NULL;
-					return -1;
-
-				case 13: // {ENTER}
-					std::cout << Equation << " = " << te_interp(Equation, 0) << "\n";
+					Equation[EquationArrayIndexPointer] = NULL;
 					return -1;
 
 				case 47: // /
@@ -132,14 +140,38 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 					AddToEquation(UnicodeCharacter[0]);
 					return -1;
 
-				case 61: // =
-					std::cout << Equation << " = " << te_interp(Equation, 0);
+				case 46: // .
+					printf(".");
+					AddToEquation(UnicodeCharacter[0]);
 					return -1;
 
-				default:
-					//std::wcout << "ToUnicodeEx: " << UnicodeCharacter << '\n';
-					//std::wcout << "ToUnicodeEx INT: " << (int)UnicodeCharacter[0] << '\n';
-					break;
+				case 13: // {ENTER}
+				case 61: // =
+					Enabled = false; // "disable" hook
+
+					clear_screen();
+
+					double EquationDoubleOutput = te_interp(Equation, 0); // intepret and solve the equation
+
+					std::cout << Equation << " = " << EquationDoubleOutput << "\n"; // display full equation with answer
+
+					// clear Equation array and zero Array Index Pointer
+					std::fill(std::begin(Equation), std::end(Equation), 0);
+					EquationArrayIndexPointer = 0;
+
+					// convert Equation Answer to string with removing trailing 0s
+					std::string EquationOutput = std::to_string(EquationDoubleOutput);
+					EquationOutput.erase(EquationOutput.find_last_not_of('0') + 1, std::string::npos);
+					EquationOutput.erase(EquationOutput.find_last_not_of('.') + 1, std::string::npos);
+
+					// for loop for each character in equation answer and simulate keyboard event
+					for(char ch : EquationOutput)
+					{
+						keybd_event(VkKeyScanExA(ch, GetKeyboardLayout(0)), (UINT)kbdStruct.scanCode, 0, 0);
+						keybd_event(VkKeyScanExA(ch, GetKeyboardLayout(0)), (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP,0);
+					}
+
+					return -1;
 				}
 			}
 		}
@@ -174,7 +206,7 @@ int main()
 	
 	enum
 	{ 
-		KEYID = 1 // Ctrl+Shift+alt+k key ID
+		KEYID = 1 // Ctrl+Shift+alt+k - Enable Input
 	};
 	RegisterHotKey(0, KEYID, MOD_SHIFT | MOD_CONTROL | MOD_ALT, 'K'); // register 1 key as hotkey
 	MSG msg;
