@@ -4,7 +4,7 @@ Ever wanted to double the value lenght of a box but go to google and type in the
 
 ## Features
  - ### Value Calculations
-      THIS MODE WILL BLOCK `0-9`, `+`, `-`, `*`, `/`, `=`, `.`, `{backspace}`, `{enter}` WHEN ENABLED FROM ENTERTING INTO NORMAL PROGRAMS
+      THIS MODE WILL BLOCK `0-9`, `+`, `-`, `*`, `/`, `=`, `.`, `{backspace}`, `{enter}` WHEN ENABLED FROM ENTERING INTO NORMAL PROGRAMS
     
     Currently this is the only feature which allows for easy calculations for values (such as form lenght and width or array size). To enable this "mode" you need to press `ctrl` + `alt` + `shift` + `k`.
     
