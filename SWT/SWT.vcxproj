@@ -145,10 +145,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DynamicMenuSystem\AsciiTextGenerator.cpp" />
+    <ClCompile Include="DynamicMenuSystem\DynamicMenuSystem.cpp" />
     <ClCompile Include="SWT.cpp" />
     <ClCompile Include="TinyExpr\tinyexpr.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DynamicMenuSystem\AsciiTextGenerator.h" />
+    <ClInclude Include="DynamicMenuSystem\DynamicMenuSystem.h" />
     <ClInclude Include="TinyExpr\tinyexpr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -6,6 +6,8 @@
 #include <string>
 
 #include "./TinyExpr/tinyexpr.h"
+#include "./DynamicMenuSystem/DynamicMenuSystem.h"
+#include <thread>
 
 // If Program is enabled
 bool Enabled = true;
@@ -201,6 +203,15 @@ void ReleaseHook()
 
 int main()
 {
+	/*auto lamdba = []
+	{
+		DynamicMenuSystem::AddMenuEntries(1, MenuEntry("Set Keyboard Hook", SetHook));
+		DynamicMenuSystem::AddMenuEntries(1, MenuEntry("Release Keyboard Hook", ReleaseHook));
+		DynamicMenuSystem::CreateMenu("SWT", true);
+	};
+
+	std::thread MenuThread(lamdba);*/
+
 	// Set the hook
 	SetHook();
 	
