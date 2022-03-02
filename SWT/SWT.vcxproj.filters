@@ -17,21 +17,9 @@
     <ClCompile Include="TinyExpr\tinyexpr.c">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="DynamicMenuSystem\AsciiTextGenerator.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DynamicMenuSystem\DynamicMenuSystem.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TinyExpr\tinyexpr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DynamicMenuSystem\AsciiTextGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DynamicMenuSystem\DynamicMenuSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
