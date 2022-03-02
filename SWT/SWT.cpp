@@ -203,20 +203,11 @@ void ReleaseHook()
 
 int main()
 {
-	/*auto lamdba = []
-	{
-		DynamicMenuSystem::AddMenuEntries(1, MenuEntry("Set Keyboard Hook", SetHook));
-		DynamicMenuSystem::AddMenuEntries(1, MenuEntry("Release Keyboard Hook", ReleaseHook));
-		DynamicMenuSystem::CreateMenu("SWT", true);
-	};
-
-	std::thread MenuThread(lamdba);*/
-
 	// Set the hook
 	SetHook();
-	
+
 	enum
-	{ 
+	{
 		KEYID = 1 // Ctrl+Shift+alt+k - Enable Input
 	};
 	RegisterHotKey(0, KEYID, MOD_SHIFT | MOD_CONTROL | MOD_ALT, 'K'); // register 1 key as hotkey
@@ -242,5 +233,6 @@ int main()
 			}
 		}
 	}
+
 	return 0;
 }
