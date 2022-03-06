@@ -9,7 +9,7 @@
 #include <thread>
 
 // If Program is enabled
-bool Enabled = true;
+bool Enabled = false;
 
 // Equation Char Array
 char Equation[20] = {};
