@@ -202,34 +202,6 @@ void ReleaseHook()
 
 int main()
 {
-	std::this_thread::sleep_for(std::chrono::seconds(5));
-
-	POINT pPoint{};
-	DWORD dwCurrentID, dwCaretID;
-	HWND hCaret = ::GetForegroundWindow();
-	if(hCaret)
-	{
-		dwCaretID = GetWindowThreadProcessId(hCaret, NULL);
-		dwCurrentID = GetCurrentThreadId();
-		if(dwCurrentID != dwCaretID)
-		{
-			if(AttachThreadInput(dwCurrentID, dwCaretID, TRUE))
-			{
-				::SetFocus(hCaret);
-				::GetCaretPos(&pPoint);
-
-			}
-			else
-			{
-				//report something here
-			}
-		}
-
-	}
-	std::cout << "(" << pPoint.x << ", " << pPoint.y << ")";
-	AttachThreadInput(dwCurrentID, dwCaretID, FALSE);
-	return 0;
-
 	// Set the hook
 	SetHook();
 
