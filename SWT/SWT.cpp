@@ -12,7 +12,7 @@
 bool Enabled = false;
 
 // Equation Char Array
-char Equation[20] = {};
+char Equation[124] = {};
 int EquationArrayIndexPointer = 0; // Equation Array Index Pointer
 
 // Hook Variable
