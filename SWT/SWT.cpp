@@ -6,6 +6,8 @@
 #include <string>
 
 #include "./TinyExpr/tinyexpr.h"
+#include "./ImGui/imgui.h"
+#include "./ImGui/backends/imgui_impl_win32.h"
 #include <thread>
 
 // If Program is enabled
