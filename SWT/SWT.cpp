@@ -4,9 +4,10 @@
 #include <Windows.h>
 #include <WinUser.h>
 #include <string>
+#include <future>
+#include <thread>
 
 #include "./TinyExpr/tinyexpr.h"
-#include <thread>
 
 // If Program is enabled
 bool Enabled = false;
@@ -198,8 +199,30 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 	return CallNextHookEx(_hook, nCode, wParam, lParam);
 }
 
+#pragma region HookRelatedFunctions
+void SetHook()
+{
+	// Set the hook and set it to use the callback function above
+	// WH_KEYBOARD_LL means it will set a low level keyboard hook. More information about it at MSDN.
+	// The last 2 parameters are NULL, 0 because the callback function is in the same thread and window as the
+	// function that sets and releases the hook. If you create a hack you will not need the callback function 
+	// in another place then your own code file anyway. Read more about it at MSDN.
+	if (!(_hook = SetWindowsHookEx(WH_KEYBOARD_LL, HookCallback, NULL, 0)))
+	{
+		printf("Failed to install hook!");
+	}
+}
+
+void ReleaseHook()
+{
+	UnhookWindowsHookEx(_hook);
+}
+#pragma endregion
+
 void AutoSelect()
 {
+	ReleaseHook(); // Release hook to prevent slow typing issue (temp while testing feature)
+
 	std::string StrInput;
 	int input;
 
@@ -233,29 +256,23 @@ void AutoSelect()
 		}
 	}
 	
+	printf("You got 3 seconds to place caret/cursor in the place");
+	printf("Temporary for testing feature");
+
+	Sleep(3000); // Sleep so it is possible to place caret in needed place
+
+	keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, 0, 0);
+
 	for (int i = 0; i <= input; i++)
 	{
 		keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, 0, 0);
 		keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
+		Sleep(10);
 	}
-}
 
-void SetHook()
-{
-	// Set the hook and set it to use the callback function above
-	// WH_KEYBOARD_LL means it will set a low level keyboard hook. More information about it at MSDN.
-	// The last 2 parameters are NULL, 0 because the callback function is in the same thread and window as the
-	// function that sets and releases the hook. If you create a hack you will not need the callback function 
-	// in another place then your own code file anyway. Read more about it at MSDN.
-	if (!(_hook = SetWindowsHookEx(WH_KEYBOARD_LL, HookCallback, NULL, 0)))
-	{
-		printf("Failed to install hook!");
-	}
-}
+	keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
 
-void ReleaseHook()
-{
-	UnhookWindowsHookEx(_hook);
+	SetHook(); // rehook keyboard
 }
 
 int main()
@@ -293,6 +310,7 @@ int main()
 				break;
 
 			case AutoSelectHK:
+				//std::async(std::launch::async, AutoSelect);
 				AutoSelect();
 				break;
 			}
