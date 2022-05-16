@@ -202,6 +202,13 @@ void ReleaseHook()
 
 int main()
 {
+	Sleep(1000);
+
+	keybd_event(VkKeyScanExA('a', GetKeyboardLayout(0)), (UINT)kbdStruct.scanCode, 0, 0);
+	keybd_event(VkKeyScanExA('a', GetKeyboardLayout(0)), (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
+
+	return 0;
+
 	// Set the hook
 	SetHook();
 
