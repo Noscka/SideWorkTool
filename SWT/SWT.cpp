@@ -22,17 +22,18 @@ HHOOK _hook;
 // it contains the thing you will need: vkCode = virtual key code.
 KBDLLHOOKSTRUCT kbdStruct;
 
+#pragma region GlobalFunctions
 COORD GetConsoleCursorPosition(HANDLE hConsoleOutput)
 {
 	CONSOLE_SCREEN_BUFFER_INFO cbsi;
-	if(GetConsoleScreenBufferInfo(hConsoleOutput, &cbsi))
+	if (GetConsoleScreenBufferInfo(hConsoleOutput, &cbsi))
 	{
 		return cbsi.dwCursorPosition;
 	}
 	else
 	{
 		// The function failed. Call GetLastError() for details.
-		return {0, 0};
+		return { 0, 0 };
 	}
 }
 
@@ -43,7 +44,7 @@ bool AddToEquation(char Character)
 		Equation[EquationArrayIndexPointer] = Character;
 		EquationArrayIndexPointer++;
 	}
-	catch(...)
+	catch (...)
 	{
 		return false;
 	}
@@ -52,7 +53,7 @@ bool AddToEquation(char Character)
 
 void clear_screen(char fill = ' ')
 {
-	COORD tl = {0,0};
+	COORD tl = { 0,0 };
 	CONSOLE_SCREEN_BUFFER_INFO s;
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	GetConsoleScreenBufferInfo(console, &s);
@@ -61,6 +62,21 @@ void clear_screen(char fill = ' ')
 	FillConsoleOutputAttribute(console, s.wAttributes, cells, tl, &written);
 	SetConsoleCursorPosition(console, tl);
 }
+
+/// <summary>
+/// Check if String is just numbers
+/// </summary>
+/// <param name="str">String to Check</param>
+/// <returns>True if only numbers, False if not just numbers</returns>
+bool isNumber(const std::string& str)
+{
+	for (char const& c : str)
+	{
+		if (std::isdigit(c) == 0) return false;
+	}
+	return true;
+}
+#pragma endregion
 
 LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -182,6 +198,48 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 	return CallNextHookEx(_hook, nCode, wParam, lParam);
 }
 
+void AutoSelect()
+{
+	std::string StrInput;
+	int input;
+
+	while (true)
+	{
+		printf("Input amount to go right by: ");
+		std::getline(std::cin, StrInput);
+
+		if (!StrInput.empty())
+		{
+			if (isNumber(StrInput)) // check if input string is just numbers
+			{
+				input = std::stoi(StrInput);
+				if (input < 0)
+				{
+					printf("Input has to be a positive number");
+				}
+				else
+				{
+					break;
+				}
+			}
+			else
+			{
+				printf("Input has to be a interger\n");
+			}
+		}
+		else
+		{
+			printf("Input cannot be empty\n");
+		}
+	}
+	
+	for (int i = 0; i <= input; i++)
+	{
+		keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, 0, 0);
+		keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
+	}
+}
+
 void SetHook()
 {
 	// Set the hook and set it to use the callback function above
@@ -202,21 +260,16 @@ void ReleaseHook()
 
 int main()
 {
-	Sleep(1000);
-
-	keybd_event(VkKeyScanExA('a', GetKeyboardLayout(0)), (UINT)kbdStruct.scanCode, 0, 0);
-	keybd_event(VkKeyScanExA('a', GetKeyboardLayout(0)), (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
-
-	return 0;
-
 	// Set the hook
 	SetHook();
 
 	enum
 	{
-		KEYID = 1 // Ctrl+Shift+alt+k - Enable Input
+		EquationEnableHK = 1, // Ctrl+Shift+alt+k - Enable Input
+		AutoSelectHK = 2 // Ctrl+Shift+alt+L - Run Auto Select Function
 	};
-	RegisterHotKey(0, KEYID, MOD_SHIFT | MOD_CONTROL | MOD_ALT, 'K'); // register 1 key as hotkey
+	RegisterHotKey(0, EquationEnableHK, MOD_SHIFT | MOD_CONTROL | MOD_ALT, 'K'); // register 1 key as hotkey
+	RegisterHotKey(0, AutoSelectHK, MOD_SHIFT | MOD_CONTROL | MOD_ALT, 'L'); // register 2 key as hotkey
 	MSG msg;
 	while(GetMessage(&msg, 0, 0, 0))
 	{
@@ -224,11 +277,12 @@ int main()
 		switch(msg.message)
 		{
 		case WM_HOTKEY:
-			if(msg.wParam == KEYID)
+			switch (msg.wParam)
 			{
+			case EquationEnableHK:
 				Enabled = !Enabled;
 
-				if(Enabled)
+				if (Enabled)
 				{
 					printf("Enabled\n");
 				}
@@ -236,6 +290,11 @@ int main()
 				{
 					printf("Disabled\n");
 				}
+				break;
+
+			case AutoSelectHK:
+				AutoSelect();
+				break;
 			}
 		}
 	}
