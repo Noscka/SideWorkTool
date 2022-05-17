@@ -13,4 +13,4 @@ Ever wanted to double the value lenght of a box but you had to go to google and 
 - ### Auto Select (Needs better Name)
   THIS MODE WILL BLOCK `0-9`, `{backspace}`, `{enter}` WHEN ENABLED FROM ENTERING INTO NORMAL PROGRAMS
   
-  WORK IN PROGRESS - The feature will make the cursor/caret (the magical blinking thing from which text appears) go specified amount of times in the direction selected. to run the feature, press `ctrl` + `alt` + `shift` + `L`.
+  The feature will make the cursor/caret (the magical blinking thing from which text appears) go specified amount of times in the direction selected. to run the feature, press `ctrl` + `alt` + `shift` + `L`.
