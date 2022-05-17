@@ -213,7 +213,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 				std::cout << Equation << " = " << EquationDoubleOutput << "\n"; // display full equation with answer
 
 				// clear Equation array and zero Array Index Pointer
-				std::fill(std::begin(Equation), std::end(Equation), 0);
+				std::fill(std::begin(Equation), std::end(Equation), NULL);
 				EquationArrayIndexPointer = 0;
 
 				// convert Equation Answer to string with removing trailing 0s
@@ -262,25 +262,47 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 				return -1;
 
 			case 8: // {BACKSPACE}
-				if (EquationArrayIndexPointer > 0)
+				if (AutoSelectArrayIndexPointer > 0)
 				{
 					NewCoord = { (SHORT)(GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y }; // create new coord with x-1 and same y
 					SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // use new coord
 					printf(" "); // delete character
 					SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // go back 1 space
-					AutoSelectArrayIndexPointer--; // TEST HERE
+					AutoSelectArrayIndexPointer--;
 				}
+				AutoSelectArray[AutoSelectArrayIndexPointer] = NULL;
+				return -1;
 
 			case 13: // {ENTER}
-				int input;
+				clear_screen();
+
+				int DirectionCount = 0;
 				std::string StrInput = AutoSelectArray;
 
 				if (!StrInput.empty())
 				{
 					if (isNumber(StrInput)) // check if input string is just numbers
 					{
-						input = std::stoi(StrInput);
-						if (input < 0)
+						DirectionCount = std::stoi(StrInput);
+						if (!(DirectionCount < 0))
+						{
+							// clear Auto Select array and zero Array Index Pointer
+							std::fill(std::begin(AutoSelectArray), std::end(AutoSelectArray), NULL);
+							AutoSelectArrayIndexPointer = 0;
+
+							//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, 0, 0);
+
+							for (int i = 1; i <= DirectionCount; i++)
+							{
+								keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, 0, 0);
+								keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
+							}
+
+							//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
+
+							std::cout << "Moved " << DirectionCount << " Spaces Right" << std::endl;
+						}
+						else
 						{
 							printf("Input has to be a positive number");
 						}
@@ -294,17 +316,6 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 				{
 					printf("Input cannot be empty\n");
 				}
-
-				//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, 0, 0);
-
-				for (int i = 0; i <= input; i++)
-				{
-					keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, 0, 0);
-					keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
-					Sleep(10);
-				}
-
-				//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
 
 				EnableAutoSelect = false;
 				return -1;
@@ -364,11 +375,11 @@ int main()
 
 				if (EnabledEquation)
 				{
-					printf("Enabled\n");
+					printf("Enabled Equation Mode\n");
 				}
 				else
 				{
-					printf("Disabled\n");
+					printf("Stopped Equation Mode\n");
 				}
 				break;
 
