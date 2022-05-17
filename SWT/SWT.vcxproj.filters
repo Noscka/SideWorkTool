@@ -9,18 +9,27 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{d009f049-67ad-4b00-93a6-b2760ff5a8ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\TinyExpr">
+      <UniqueIdentifier>{7862dbcf-5180-4318-815b-1366cfa179c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SWT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TinyExpr\tinyexpr.c">
-      <Filter>Header Files</Filter>
+      <Filter>Libraries\TinyExpr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TinyExpr\tinyexpr.h">
-      <Filter>Header Files</Filter>
+      <Filter>Libraries\TinyExpr</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" />
   </ItemGroup>
 </Project>
