@@ -11,11 +11,14 @@
 
 // If Equation Calculation is enabled
 bool EnabledEquation = false;
-bool EnableAutoSelect = false, AutoSelectFirstPass = false;
+bool EnableAutoSelect = false;
 
 // Equation Char Array
 char Equation[124] = {};
 int EquationArrayIndexPointer = 0; // Equation Array Index Pointer
+
+char AutoSelectArray[124] = {};
+int AutoSelectArrayIndexPointer = 0; // Auto Select Array Index Pointer
 
 // Hook Variable
 HHOOK _hook;
@@ -53,6 +56,20 @@ bool AddToEquation(char Character)
 	return true;
 }
 
+bool AddToAutoSelectArray(char Character)
+{
+	try
+	{
+		AutoSelectArray[AutoSelectArrayIndexPointer] = Character;
+		AutoSelectArrayIndexPointer++;
+	}
+	catch (...)
+	{
+		return false;
+	}
+	return true;
+}
+
 void clear_screen(char fill = ' ')
 {
 	COORD tl = { 0,0 };
@@ -79,6 +96,11 @@ bool isNumber(const std::string& str)
 	return true;
 }
 
+/// <summary>
+/// Get data from lParam to determine which key was pressed
+/// </summary>
+/// <param name="lParam">lParam from hook</param>
+/// <returns>wchar_t array</returns>
 wchar_t* GetUnicodeCharacter(LPARAM lParam)
 {
 	kbdStruct = *((KBDLLHOOKSTRUCT*)lParam);
@@ -217,8 +239,11 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 		// if keydown hook event (allows for holding and "spamming" key)
 		case WM_KEYDOWN:
 			// Pointer to UnicodeCharacter Array
-			wchar_t* UnicodeCharacter;
-			UnicodeCharacter = GetUnicodeCharacter(lParam);
+			wchar_t UnicodeCharacter[3] = {};
+			*UnicodeCharacter = *GetUnicodeCharacter(lParam);
+
+			// Coord for backspace cursor position editing
+			COORD NewCoord;
 
 			switch (UnicodeCharacter[0])
 			{
@@ -233,10 +258,55 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 			case 56: // 8
 			case 57: // 9
 				std::wcout << UnicodeCharacter;
-				//AddToArray(UnicodeCharacter[0]);
+				AddToAutoSelectArray(UnicodeCharacter[0]);
 				return -1;
 
+			case 8: // {BACKSPACE}
+				if (EquationArrayIndexPointer > 0)
+				{
+					NewCoord = { (SHORT)(GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y }; // create new coord with x-1 and same y
+					SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // use new coord
+					printf(" "); // delete character
+					SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // go back 1 space
+					AutoSelectArrayIndexPointer--; // TEST HERE
+				}
+
 			case 13: // {ENTER}
+				int input;
+				std::string StrInput = AutoSelectArray;
+
+				if (!StrInput.empty())
+				{
+					if (isNumber(StrInput)) // check if input string is just numbers
+					{
+						input = std::stoi(StrInput);
+						if (input < 0)
+						{
+							printf("Input has to be a positive number");
+						}
+					}
+					else
+					{
+						printf("Input has to be a interger\n");
+					}
+				}
+				else
+				{
+					printf("Input cannot be empty\n");
+				}
+
+				//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, 0, 0);
+
+				for (int i = 0; i <= input; i++)
+				{
+					keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, 0, 0);
+					keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
+					Sleep(10);
+				}
+
+				//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
+
+				EnableAutoSelect = false;
 				return -1;
 			}
 
@@ -267,62 +337,6 @@ void ReleaseHook()
 	UnhookWindowsHookEx(_hook);
 }
 #pragma endregion
-
-void AutoSelect()
-{
-	ReleaseHook(); // Release hook to prevent slow typing issue (temp while testing feature)
-
-	std::string StrInput;
-	int input;
-
-	while (true)
-	{
-		printf("Input amount to go right by: ");
-		std::getline(std::cin, StrInput);
-
-		if (!StrInput.empty())
-		{
-			if (isNumber(StrInput)) // check if input string is just numbers
-			{
-				input = std::stoi(StrInput);
-				if (input < 0)
-				{
-					printf("Input has to be a positive number");
-				}
-				else
-				{
-					break;
-				}
-			}
-			else
-			{
-				printf("Input has to be a interger\n");
-			}
-		}
-		else
-		{
-			printf("Input cannot be empty\n");
-		}
-	}
-	
-	printf("You got 3 seconds to place caret/cursor in the place");
-	printf("Temporary for testing feature");
-
-	Sleep(3000); // Sleep so it is possible to place caret in needed place
-
-	keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, 0, 0);
-
-	for (int i = 0; i <= input; i++)
-	{
-		keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, 0, 0);
-		keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
-		Sleep(10);
-	}
-
-	keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
-
-	SetHook(); // rehook keyboard
-}
 
 int main()
 {
@@ -359,14 +373,8 @@ int main()
 				break;
 
 			case AutoSelectHK:
-				//initiate Auto Select by asking amount
 				printf("Input amount to go right by: ");
-
-				AutoSelectFirstPass = true;
 				EnableAutoSelect = true;
-
-				//std::async(std::launch::async, AutoSelect);
-				AutoSelect();
 				break;
 			}
 		}
