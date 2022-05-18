@@ -23,10 +23,16 @@
     <ClCompile Include="TinyExpr\tinyexpr.c">
       <Filter>Libraries\TinyExpr</Filter>
     </ClCompile>
+    <ClCompile Include="Features\Features.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TinyExpr\tinyexpr.h">
       <Filter>Libraries\TinyExpr</Filter>
+    </ClInclude>
+    <ClInclude Include="Features\Features.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
