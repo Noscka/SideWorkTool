@@ -10,9 +10,6 @@
 #include "./TinyExpr/tinyexpr.h"
 #include "./Features/Features.h"
 
-// If Equation Calculation is enabled
-
-
 // Hook Variable
 HHOOK _hook;
 
@@ -130,16 +127,16 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 				return -1;
 
 			case 8: // {BACKSPACE}
-				if(EquationClass::EquationArrayIndexPointer > 0)
+				if(EquationClass::InputStorageArrayIndexPointer > 0)
 				{
 					NewCoord = {(SHORT)(GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y}; // create new coord with x-1 and same y
 					SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // use new coord
 					printf(" "); // delete character
 					SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // go back 1 space
-					EquationClass::EquationArrayIndexPointer--;
+					EquationClass::InputStorageArrayIndexPointer--;
 				}
 
-				EquationClass::Equation[EquationClass::EquationArrayIndexPointer] = NULL;
+				EquationClass::InputStorageArray[EquationClass::InputStorageArrayIndexPointer] = NULL;
 				return -1;
 
 			case 47: // /
@@ -173,15 +170,15 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 
 				clear_screen();
 
-				double EquationDoubleOutput = te_interp(EquationClass::Equation, 0); // intepret and solve the equation
+				double EquationDoubleOutput = te_interp(EquationClass::InputStorageArray, 0); // intepret and solve the equation
 
-				std::cout << EquationClass::Equation << " = " << EquationDoubleOutput << "\n"; // display full equation with answer
+				std::cout << EquationClass::InputStorageArray << " = " << EquationDoubleOutput << "\n"; // display full equation with answer
 
-				// clear Equation array and zero Array Index Pointer
-				std::fill(std::begin(EquationClass::Equation), std::end(EquationClass::Equation), NULL);
-				EquationClass::EquationArrayIndexPointer = 0;
+				// clear InputStorageArray array and zero Array Index Pointer
+				std::fill(std::begin(EquationClass::InputStorageArray), std::end(EquationClass::InputStorageArray), NULL);
+				EquationClass::InputStorageArrayIndexPointer = 0;
 
-				// convert Equation Answer to string with removing trailing 0s
+				// convert InputStorageArray Answer to string with removing trailing 0s
 				std::string EquationOutput = std::to_string(EquationDoubleOutput);
 				EquationOutput.erase(EquationOutput.find_last_not_of('0') + 1, std::string::npos);
 				EquationOutput.erase(EquationOutput.find_last_not_of('.') + 1, std::string::npos);
@@ -227,22 +224,22 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 				return -1;
 
 			case 8: // {BACKSPACE}
-				if (AutoSelectClass::AutoSelectArrayIndexPointer > 0)
+				if (AutoSelectClass::InputStorageArrayIndexPointer > 0)
 				{
 					NewCoord = { (SHORT)(GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y }; // create new coord with x-1 and same y
 					SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // use new coord
 					printf(" "); // delete character
 					SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // go back 1 space
-					AutoSelectClass::AutoSelectArrayIndexPointer--;
+					AutoSelectClass::InputStorageArrayIndexPointer--;
 				}
-				AutoSelectClass::AutoSelectArray[AutoSelectClass::AutoSelectArrayIndexPointer] = NULL;
+				AutoSelectClass::InputStorageArray[AutoSelectClass::InputStorageArrayIndexPointer] = NULL;
 				return -1;
 
 			case 13: // {ENTER}
 				clear_screen();
 
 				int DirectionCount = 0;
-				std::string StrInput = AutoSelectClass::AutoSelectArray;
+				std::string StrInput = AutoSelectClass::InputStorageArray;
 
 				if (!StrInput.empty())
 				{
@@ -252,8 +249,8 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 						if (!(DirectionCount < 0))
 						{
 							// clear Auto Select array and zero Array Index Pointer
-							std::fill(std::begin(AutoSelectClass::AutoSelectArray), std::end(AutoSelectClass::AutoSelectArray), NULL);
-							AutoSelectClass::AutoSelectArrayIndexPointer = 0;
+							std::fill(std::begin(AutoSelectClass::InputStorageArray), std::end(AutoSelectClass::InputStorageArray), NULL);
+							AutoSelectClass::InputStorageArrayIndexPointer = 0;
 
 							//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, 0, 0);
 

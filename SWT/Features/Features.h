@@ -4,9 +4,9 @@ static class EquationClass
 public:
 	static bool Enabled;
 
-	// Equation Char Array
-	static char Equation[124];
-	static int EquationArrayIndexPointer; // Equation Array Index Pointer
+	// InputStorageArray Char Array
+	static char InputStorageArray[124];
+	static int InputStorageArrayIndexPointer; // InputStorageArray Array Index Pointer
 
 	static bool AddToCharArray(char Character);
 };
@@ -17,8 +17,8 @@ public:
 	static bool Enabled;
 
 	// Auto Select Char Array
-	static char AutoSelectArray[124];
-	static int AutoSelectArrayIndexPointer; // Auto Select Array Index Pointer
+	static char InputStorageArray[124];
+	static int InputStorageArrayIndexPointer; // Auto Select Array Index Pointer
 
 	static bool AddToCharArray(char Character);
 };

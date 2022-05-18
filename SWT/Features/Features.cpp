@@ -1,14 +1,14 @@
 #include "Features.h"
 
 bool EquationClass::Enabled = false;
-char EquationClass::Equation[124] = {};
-int EquationClass::EquationArrayIndexPointer = 0;
+char EquationClass::InputStorageArray[124] = {};
+int EquationClass::InputStorageArrayIndexPointer = 0;
 bool EquationClass::AddToCharArray(char Character)
 {
 	try
 	{
-		Equation[EquationArrayIndexPointer] = Character;
-		EquationArrayIndexPointer++;
+		InputStorageArray[InputStorageArrayIndexPointer] = Character;
+		InputStorageArrayIndexPointer++;
 	}
 	catch (...)
 	{
@@ -19,14 +19,14 @@ bool EquationClass::AddToCharArray(char Character)
 
 
 bool AutoSelectClass::Enabled = false;
-char AutoSelectClass::AutoSelectArray[124] = {};
-int AutoSelectClass::AutoSelectArrayIndexPointer = 0;
+char AutoSelectClass::InputStorageArray[124] = {};
+int AutoSelectClass::InputStorageArrayIndexPointer = 0;
 bool AutoSelectClass::AddToCharArray(char Character)
 {
 	try
 	{
-		AutoSelectArray[AutoSelectArrayIndexPointer] = Character;
-		AutoSelectArrayIndexPointer++;
+		InputStorageArray[InputStorageArrayIndexPointer] = Character;
+		InputStorageArrayIndexPointer++;
 	}
 	catch (...)
 	{
