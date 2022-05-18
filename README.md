@@ -2,6 +2,8 @@
 # SWT
 Ever wanted to double the value lenght of a box but you had to go to google and type in the equation? well SWT (Side Working Tool) is made just for this and (in the future) many more small but annoying problems while working. it is a simple program made to assist when working on projects. While it was aimed at programming projects, it can be used with anything else that has writable text.
 
+The program uses many clever (at least in my eyes) tricks such as [dynamic array size function](https://github.com/Ruski1/Dynamic-Array-size-Function-Test), Low Level keyboard hook, Hot keys and more!
+
 ## Features
  - ### Value Calculations
       THIS MODE WILL BLOCK `0-9`, `+`, `-`, `*`, `/`, `=`, `.`, `{backspace}`, `{enter}` WHEN ENABLED FROM ENTERING INTO NORMAL PROGRAMS
