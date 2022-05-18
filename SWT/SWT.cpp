@@ -6,6 +6,7 @@
 #include <string>
 #include <future>
 #include <thread>
+#include <conio.h>
 
 #include "./TinyExpr/tinyexpr.h"
 #include "./Features/Features.h"
@@ -313,6 +314,18 @@ void ReleaseHook()
 
 int main()
 {
+#pragma region ProgramAlreadyrunningcheck
+	CreateMutexA(0, FALSE, "Local\\$myprogram$"); // try to create a named mutex
+	if (GetLastError() == ERROR_ALREADY_EXISTS) // Quit if mutex already exists (program already running)
+	{
+		printf("Program is already running\n");
+		printf("Press any key to exit");
+		_getch();
+		return -1;
+	}
+#pragma endregion
+
+
 	// Set the hook
 	SetHook();
 
