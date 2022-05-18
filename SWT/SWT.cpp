@@ -8,17 +8,10 @@
 #include <thread>
 
 #include "./TinyExpr/tinyexpr.h"
+#include "./Features/Features.h"
 
 // If Equation Calculation is enabled
-bool EnabledEquation = false;
-bool EnableAutoSelect = false;
 
-// Equation Char Array
-char Equation[124] = {};
-int EquationArrayIndexPointer = 0; // Equation Array Index Pointer
-
-char AutoSelectArray[124] = {};
-int AutoSelectArrayIndexPointer = 0; // Auto Select Array Index Pointer
 
 // Hook Variable
 HHOOK _hook;
@@ -40,34 +33,6 @@ COORD GetConsoleCursorPosition(HANDLE hConsoleOutput)
 		// The function failed. Call GetLastError() for details.
 		return { 0, 0 };
 	}
-}
-
-bool AddToEquation(char Character)
-{
-	try
-	{
-		Equation[EquationArrayIndexPointer] = Character;
-		EquationArrayIndexPointer++;
-	}
-	catch (...)
-	{
-		return false;
-	}
-	return true;
-}
-
-bool AddToAutoSelectArray(char Character)
-{
-	try
-	{
-		AutoSelectArray[AutoSelectArrayIndexPointer] = Character;
-		AutoSelectArrayIndexPointer++;
-	}
-	catch (...)
-	{
-		return false;
-	}
-	return true;
 }
 
 void clear_screen(char fill = ' ')
@@ -135,7 +100,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 		return CallNextHookEx(_hook, nCode, wParam, lParam);
 	}
 
-	if(EnabledEquation)
+	if(EquationClass::Enabled)
 	{
 		switch(wParam)
 		{
@@ -161,60 +126,60 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 			case 56: // 8
 			case 57: // 9
 				std::wcout << UnicodeCharacter;
-				AddToEquation(UnicodeCharacter[0]);
+				EquationClass::AddToCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 8: // {BACKSPACE}
-				if(EquationArrayIndexPointer > 0)
+				if(EquationClass::EquationArrayIndexPointer > 0)
 				{
 					NewCoord = {(SHORT)(GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y}; // create new coord with x-1 and same y
 					SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // use new coord
 					printf(" "); // delete character
 					SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // go back 1 space
-					EquationArrayIndexPointer--;
+					EquationClass::EquationArrayIndexPointer--;
 				}
 
-				Equation[EquationArrayIndexPointer] = NULL;
+				EquationClass::Equation[EquationClass::EquationArrayIndexPointer] = NULL;
 				return -1;
 
 			case 47: // /
 				printf("/");
-				AddToEquation(UnicodeCharacter[0]);
+				EquationClass::AddToCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 43: // +
 				printf("+");
-				AddToEquation(UnicodeCharacter[0]);
+				EquationClass::AddToCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 45: // -
 				printf("-");
-				AddToEquation(UnicodeCharacter[0]);
+				EquationClass::AddToCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 42: // *
 				printf("*");
-				AddToEquation(UnicodeCharacter[0]);
+				EquationClass::AddToCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 46: // .
 				printf(".");
-				AddToEquation(UnicodeCharacter[0]);
+				EquationClass::AddToCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 13: // {ENTER}
 			case 61: // =
-				EnabledEquation = false; // "disable" hook
+				EquationClass::Enabled = false; // "disable" hook
 
 				clear_screen();
 
-				double EquationDoubleOutput = te_interp(Equation, 0); // intepret and solve the equation
+				double EquationDoubleOutput = te_interp(EquationClass::Equation, 0); // intepret and solve the equation
 
-				std::cout << Equation << " = " << EquationDoubleOutput << "\n"; // display full equation with answer
+				std::cout << EquationClass::Equation << " = " << EquationDoubleOutput << "\n"; // display full equation with answer
 
 				// clear Equation array and zero Array Index Pointer
-				std::fill(std::begin(Equation), std::end(Equation), NULL);
-				EquationArrayIndexPointer = 0;
+				std::fill(std::begin(EquationClass::Equation), std::end(EquationClass::Equation), NULL);
+				EquationClass::EquationArrayIndexPointer = 0;
 
 				// convert Equation Answer to string with removing trailing 0s
 				std::string EquationOutput = std::to_string(EquationDoubleOutput);
@@ -232,7 +197,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 			}
 		}
 	}
-	else if (EnableAutoSelect)
+	else if (AutoSelectClass::Enabled)
 	{
 		switch (wParam)
 		{
@@ -258,26 +223,26 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 			case 56: // 8
 			case 57: // 9
 				std::wcout << UnicodeCharacter;
-				AddToAutoSelectArray(UnicodeCharacter[0]);
+				AutoSelectClass::AddToCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 8: // {BACKSPACE}
-				if (AutoSelectArrayIndexPointer > 0)
+				if (AutoSelectClass::AutoSelectArrayIndexPointer > 0)
 				{
 					NewCoord = { (SHORT)(GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y }; // create new coord with x-1 and same y
 					SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // use new coord
 					printf(" "); // delete character
 					SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // go back 1 space
-					AutoSelectArrayIndexPointer--;
+					AutoSelectClass::AutoSelectArrayIndexPointer--;
 				}
-				AutoSelectArray[AutoSelectArrayIndexPointer] = NULL;
+				AutoSelectClass::AutoSelectArray[AutoSelectClass::AutoSelectArrayIndexPointer] = NULL;
 				return -1;
 
 			case 13: // {ENTER}
 				clear_screen();
 
 				int DirectionCount = 0;
-				std::string StrInput = AutoSelectArray;
+				std::string StrInput = AutoSelectClass::AutoSelectArray;
 
 				if (!StrInput.empty())
 				{
@@ -287,8 +252,8 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 						if (!(DirectionCount < 0))
 						{
 							// clear Auto Select array and zero Array Index Pointer
-							std::fill(std::begin(AutoSelectArray), std::end(AutoSelectArray), NULL);
-							AutoSelectArrayIndexPointer = 0;
+							std::fill(std::begin(AutoSelectClass::AutoSelectArray), std::end(AutoSelectClass::AutoSelectArray), NULL);
+							AutoSelectClass::AutoSelectArrayIndexPointer = 0;
 
 							//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, 0, 0);
 
@@ -317,7 +282,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 					printf("Input cannot be empty\n");
 				}
 
-				EnableAutoSelect = false;
+				AutoSelectClass::Enabled = false;
 				return -1;
 			}
 
@@ -371,9 +336,9 @@ int main()
 			switch (msg.wParam)
 			{
 			case EquationEnableHK:
-				EnabledEquation = !EnabledEquation;
+				EquationClass::Enabled = !EquationClass::Enabled;
 
-				if (EnabledEquation)
+				if (EquationClass::Enabled)
 				{
 					printf("Enabled Equation Mode\n");
 				}
@@ -385,7 +350,7 @@ int main()
 
 			case AutoSelectHK:
 				printf("Input amount to go right by: ");
-				EnableAutoSelect = true;
+				AutoSelectClass::Enabled = true;
 				break;
 			}
 		}
