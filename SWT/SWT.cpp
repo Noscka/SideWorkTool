@@ -124,7 +124,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 			case 56: // 8
 			case 57: // 9
 				std::wcout << UnicodeCharacter;
-				EquationClass::AddToCharArray(UnicodeCharacter[0]);
+				EquationClass::AddToDynamicCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 8: // {BACKSPACE}
@@ -142,27 +142,27 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 
 			case 47: // /
 				printf("/");
-				EquationClass::AddToCharArray(UnicodeCharacter[0]);
+				EquationClass::AddToDynamicCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 43: // +
 				printf("+");
-				EquationClass::AddToCharArray(UnicodeCharacter[0]);
+				EquationClass::AddToDynamicCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 45: // -
 				printf("-");
-				EquationClass::AddToCharArray(UnicodeCharacter[0]);
+				EquationClass::AddToDynamicCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 42: // *
 				printf("*");
-				EquationClass::AddToCharArray(UnicodeCharacter[0]);
+				EquationClass::AddToDynamicCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 46: // .
 				printf(".");
-				EquationClass::AddToCharArray(UnicodeCharacter[0]);
+				EquationClass::AddToDynamicCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 13: // {ENTER}
@@ -176,7 +176,8 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 				std::cout << EquationClass::InputStorageArray << " = " << EquationDoubleOutput << "\n"; // display full equation with answer
 
 				// clear InputStorageArray array and zero Array Index Pointer
-				std::fill(std::begin(EquationClass::InputStorageArray), std::end(EquationClass::InputStorageArray), NULL);
+				//std::fill(std::begin(EquationClass::InputStorageArray), std::end(EquationClass::InputStorageArray), NULL);
+				EquationClass::InputStorageArray = new char[EquationClass::InputStorageArraySize]();
 				EquationClass::InputStorageArrayIndexPointer = 0;
 
 				// convert InputStorageArray Answer to string with removing trailing 0s
@@ -221,7 +222,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 			case 56: // 8
 			case 57: // 9
 				std::wcout << UnicodeCharacter;
-				AutoSelectClass::AddToCharArray(UnicodeCharacter[0]);
+				AutoSelectClass::AddToDynamicCharArray(UnicodeCharacter[0]);
 				return -1;
 
 			case 8: // {BACKSPACE}
@@ -250,7 +251,8 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 						if (!(DirectionCount < 0))
 						{
 							// clear Auto Select array and zero Array Index Pointer
-							std::fill(std::begin(AutoSelectClass::InputStorageArray), std::end(AutoSelectClass::InputStorageArray), NULL);
+							//std::fill(std::begin(AutoSelectClass::InputStorageArray), std::end(AutoSelectClass::InputStorageArray), NULL);
+							AutoSelectClass::InputStorageArray = new char[AutoSelectClass::InputStorageArraySize]();
 							AutoSelectClass::InputStorageArrayIndexPointer = 0;
 
 							//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, 0, 0);
