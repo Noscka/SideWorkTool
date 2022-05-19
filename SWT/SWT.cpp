@@ -173,17 +173,19 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 
 				double EquationDoubleOutput = te_interp(EquationClass::InputStorageArray, 0); // intepret and solve the equation
 
-				std::cout << EquationClass::InputStorageArray << " = " << EquationDoubleOutput << "\n"; // display full equation with answer
-
-				// clear InputStorageArray array and zero Array Index Pointer
-				//std::fill(std::begin(EquationClass::InputStorageArray), std::end(EquationClass::InputStorageArray), NULL);
-				EquationClass::InputStorageArray = new char[EquationClass::InputStorageArraySize]();
-				EquationClass::InputStorageArrayIndexPointer = 0;
+				//std::cout << EquationClass::InputStorageArray << " = " << EquationDoubleOutput << "\n"; // display full equation with answer
 
 				// convert InputStorageArray Answer to string with removing trailing 0s
 				std::string EquationOutput = std::to_string(EquationDoubleOutput);
 				EquationOutput.erase(EquationOutput.find_last_not_of('0') + 1, std::string::npos);
 				EquationOutput.erase(EquationOutput.find_last_not_of('.') + 1, std::string::npos);
+
+				std::string temp = "Calculated " + std::string(EquationClass::InputStorageArray) + " = " + EquationOutput + '\n';
+				LoggingClass::LogEvent((char*)temp.c_str());
+
+				// clear InputStorageArray array and zero Array Index Pointer
+				EquationClass::InputStorageArray = new char[EquationClass::InputStorageArraySize]();
+				EquationClass::InputStorageArrayIndexPointer = 0;
 
 				// for loop for each character in equation answer and simulate keyboard event
 				for(char ch : EquationOutput)
@@ -192,6 +194,11 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 					keybd_event(VkKeyScanExA(ch, GetKeyboardLayout(0)), (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP,0);
 				}
 
+				printf("====Logs====\n");
+					   for (int i = 0; i < LoggingClass::LoggingArrayIndexPointer; i++)
+					   {
+						   printf(LoggingClass::LoggingArray[i]);
+					   }
 				return -1;
 			}
 		}
@@ -245,37 +252,22 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 
 				if (!StrInput.empty())
 				{
-					if (isNumber(StrInput)) // check if input string is just numbers
+					DirectionCount = std::stoi(StrInput);
+					// clear Auto Select array and zero Array Index Pointer
+					AutoSelectClass::InputStorageArray = new char[AutoSelectClass::InputStorageArraySize]();
+					AutoSelectClass::InputStorageArrayIndexPointer = 0;
+
+					//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, 0, 0);
+
+					for (int i = 1; i <= DirectionCount; i++)
 					{
-						DirectionCount = std::stoi(StrInput);
-						if (!(DirectionCount < 0))
-						{
-							// clear Auto Select array and zero Array Index Pointer
-							//std::fill(std::begin(AutoSelectClass::InputStorageArray), std::end(AutoSelectClass::InputStorageArray), NULL);
-							AutoSelectClass::InputStorageArray = new char[AutoSelectClass::InputStorageArraySize]();
-							AutoSelectClass::InputStorageArrayIndexPointer = 0;
-
-							//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, 0, 0);
-
-							for (int i = 1; i <= DirectionCount; i++)
-							{
-								keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, 0, 0);
-								keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
-							}
-
-							//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
-
-							std::cout << "Moved " << DirectionCount << " Spaces Right" << std::endl;
-						}
-						else
-						{
-							printf("Input has to be a positive number");
-						}
+						keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, 0, 0);
+						keybd_event(VK_RIGHT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
 					}
-					else
-					{
-						printf("Input has to be a interger\n");
-					}
+
+					//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
+
+					//std::cout << "Moved " << DirectionCount << " Spaces Right" << std::endl;
 				}
 				else
 				{
@@ -283,6 +275,15 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 				}
 
 				AutoSelectClass::Enabled = false;
+
+				std::string temp = "Moved " + std::to_string(DirectionCount) + " Spaces Right" + '\n';
+				LoggingClass::LogEvent((char*)temp.c_str());
+
+				printf("====Logs====\n");
+				for (int i = 0; i < LoggingClass::LoggingArrayIndexPointer; i++)
+				{
+					printf(LoggingClass::LoggingArray[i]);
+				}
 				return -1;
 			}
 
