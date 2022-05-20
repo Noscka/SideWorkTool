@@ -1,5 +1,19 @@
 #pragma once
 #include <string>
+#include <Windows.h>
+#include "../TinyExpr/tinyexpr.h"
+
+#include <iostream>
+
+
+static class GlobalFunctions
+{
+public:
+	static COORD GetConsoleCursorPosition(HANDLE hConsoleOutput);
+	static void clear_screen(char fill = ' ');
+	static bool isNumber(const std::string& str);
+	static wchar_t* GetUnicodeCharacter(LPARAM lParam, KBDLLHOOKSTRUCT kbdStruct);
+};
 
 static class EquationClass
 {
@@ -12,6 +26,8 @@ public:
 	static int ArrayStep; // how much the array will get increased by when it reaches the limit
 
 	static bool AddToDynamicCharArray(char Character);
+	static void RemovePreviousCharacter();
+	static void FinishFeature(KBDLLHOOKSTRUCT kbdStruct);
 };
 
 static class AutoSelectClass
@@ -24,8 +40,9 @@ public:
 	static int InputStorageArrayIndexPointer; // Auto Select Array Index Pointer
 	static int ArrayStep; // how much the array will get increased by when it reaches the limit
 
-
 	static bool AddToDynamicCharArray(char Character);
+	static void RemovePreviousCharacter();
+	static void FinishFeature(KBDLLHOOKSTRUCT kbdStruct);
 };
 
 static class LoggingClass
