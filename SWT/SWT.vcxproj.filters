@@ -34,8 +34,14 @@
     <ClInclude Include="Features\Features.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resource%28Icons%29\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource(Icons)\SWT.rc" />
   </ItemGroup>
 </Project>
