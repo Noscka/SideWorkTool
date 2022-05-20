@@ -1,4 +1,8 @@
 [![Workflow CodeQL Scan](https://github.com/Ruski1/SWT--Side-Working-Tool/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/Ruski1/SWT--Side-Working-Tool/actions/workflows/main.yml)
+<div align="center">
+ <img src="./Logo/Banner/Banner.png" title="Side Working tool Banner" alt="Side Working tool Banner" width="320" height="160"/>
+</div>
+
 # SWT
 Ever wanted to double the value lenght of a box but you had to go to google and type in the equation? well SWT (Side Working Tool) is made just for this and (in the future) many more small but annoying problems while working. it is a simple program made to assist when working on projects. While it was aimed at programming projects, it can be used with anything else that has writable text.
 
