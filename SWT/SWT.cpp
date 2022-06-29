@@ -32,7 +32,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 		{
 		// if keydown hook event (allows for holding and "spamming" key)
 		case WM_KEYDOWN:
-			//// Pointer to UnicodeCharacter Array
+			// Pointer to UnicodeCharacter Array
 			wchar_t UnicodeCharacter[3] = {};
 			*UnicodeCharacter = *GlobalFunctions::GetUnicodeCharacter(lParam, kbdStruct);
 
