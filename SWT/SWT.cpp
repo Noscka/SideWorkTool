@@ -142,7 +142,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 			case 'h':
 			case 'H':
 				GlobalFunctions::clear_screen();
-				std::cout << R"(COMMANDS:
+				std::wcout << LR"(COMMANDS:
 ctrl + alt + shift + k - Value Calculation Mode
 ctrl + alt + shift + L - Auto Select Mode)" << std::endl;
 				break;
@@ -166,7 +166,7 @@ void SetHook()
 	// in another place then your own code file anyway. Read more about it at MSDN.
 	if (!(_hook = SetWindowsHookEx(WH_KEYBOARD_LL, HookCallback, NULL, 0)))
 	{
-		printf("Failed to install hook!");
+		wprintf(L"Failed to install hook!");
 	}
 }
 
@@ -219,6 +219,7 @@ int main()
   ███    ███ ███   ███      ███   ███ ███    ███    ▄█    ███ ███    ███   ███ ▀███▄   ███    ███ 
 ▄█████████▀   ▀█████▀        ▀█   █▀   ▀██████▀   ▄████████▀  ████████▀    ███   ▀█▀   ███    █▀  
                                                                            ▀                      
+Begin by pressing h
 )" << std::endl;
 
 	// Set the hook
@@ -245,16 +246,16 @@ int main()
 
 				if (EquationClass::Enabled)
 				{
-					printf("Enabled Equation Mode\n");
+					wprintf(L"Enabled Equation Mode\n");
 				}
 				else
 				{
-					printf("Stopped Equation Mode\n");
+					wprintf(L"Stopped Equation Mode\n");
 				}
 				break;
 
 			case AutoSelectHK:
-				printf("Input amount to go right by: ");
+				wprintf(L"Input amount to go right by: ");
 				AutoSelectClass::Enabled = true;
 				break;
 			}

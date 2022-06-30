@@ -48,5 +48,5 @@ public:
 static class LoggingClass
 {
 public:
-	static DynamicArray<DynamicArray<char>> LoggingDynamicArray;
+	static DynamicArray<DynamicArray<wchar_t>> LoggingDynamicArray;
 };

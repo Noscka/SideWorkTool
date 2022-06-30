@@ -124,7 +124,7 @@ void EquationClass::RemovePreviousCharacter()
 	{
 		NewCoord = { (SHORT)(GlobalFunctions::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GlobalFunctions::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y }; // create new coord with x-1 and same y
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // use new coord
-		printf(" "); // delete character
+		wprintf(L" "); // delete character
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // go back 1 space
 		EquationClass::InputStorageArrayIndexPointer--;
 	}
@@ -149,8 +149,8 @@ void EquationClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 	{
 		std::string temp = "Calculated " + std::string(EquationClass::InputStorageArray) + " = " + EquationOutput + '\n';
 
-		DynamicArray<char> tempArray = DynamicArray<char>();
-		tempArray.ArrayAppend((char*)temp.c_str(), temp.length(), false);
+		DynamicArray<wchar_t> tempArray = DynamicArray<wchar_t>();
+		tempArray.ArrayAppend((wchar_t*)temp.c_str(), temp.length(), false);
 
 		LoggingClass::LoggingDynamicArray.Append(tempArray);
 	} // putting temp in lower scope so it gets cleared
@@ -166,10 +166,10 @@ void EquationClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 		keybd_event(VkKeyScanExA(ch, GetKeyboardLayout(0)), (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
 	}
 
-	printf("====Logs====\n");
-	for (DynamicArray<char> ChAr : LoggingClass::LoggingDynamicArray)
+	wprintf(L"====Logs====\n");
+	for (DynamicArray<wchar_t> ChAr : LoggingClass::LoggingDynamicArray)
 	{
-		printf(ChAr.GetArray());
+		wprintf(ChAr.GetArray());
 	}
 }
 #pragma endregion
@@ -226,7 +226,7 @@ void AutoSelectClass::RemovePreviousCharacter()
 	{
 		NewCoord = { (SHORT)(GlobalFunctions::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GlobalFunctions::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y }; // create new coord with x-1 and same y
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // use new coord
-		printf(" "); // delete character
+		wprintf(L" "); // delete character
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // go back 1 space
 		AutoSelectClass::InputStorageArrayIndexPointer--;
 	}
@@ -258,7 +258,7 @@ void AutoSelectClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 	}
 	else
 	{
-		printf("Input cannot be empty\n");
+		wprintf(L"Input cannot be empty\n");
 	}
 
 	AutoSelectClass::Enabled = false;
@@ -266,20 +266,20 @@ void AutoSelectClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 	{
 		std::string temp = "Moved " + std::to_string(DirectionCount) + " Spaces Right" + '\n';
 
-		DynamicArray<char> tempArray = DynamicArray<char>();
-		tempArray.ArrayAppend((char*)temp.c_str(), temp.length(), false);
+		DynamicArray<wchar_t> tempArray = DynamicArray<wchar_t>();
+		tempArray.ArrayAppend((wchar_t*)temp.c_str(), temp.length(), false);
 
 		LoggingClass::LoggingDynamicArray.Append(tempArray);
 	} // putting temp in lower scope so it gets cleared
 
-	printf("====Logs====\n");
-	for (DynamicArray<char> ChAr : LoggingClass::LoggingDynamicArray)
+	wprintf(L"====Logs====\n");
+	for (DynamicArray<wchar_t> ChAr : LoggingClass::LoggingDynamicArray)
 	{
-		printf(ChAr.GetArray());
+		wprintf(ChAr.GetArray());
 	}
 }
 #pragma endregion
 
 #pragma region Logging Region
-DynamicArray<DynamicArray<char>> LoggingClass::LoggingDynamicArray = DynamicArray<DynamicArray<char>>(2, 4);
+DynamicArray<DynamicArray<wchar_t>> LoggingClass::LoggingDynamicArray = DynamicArray<DynamicArray<wchar_t>>(2, 4);
 #pragma endregion
