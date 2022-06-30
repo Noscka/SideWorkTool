@@ -129,6 +129,28 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 	}
+	else // if nothing is enabled, check for "global" keys
+	{
+		switch (wParam)
+		{
+		case WM_KEYUP:
+			wchar_t UnicodeCharacter[3] = {};
+			*UnicodeCharacter = *GlobalFunctions::GetUnicodeCharacter(lParam, kbdStruct);
+
+			switch (UnicodeCharacter[0])
+			{
+			case 'h':
+			case 'H':
+				GlobalFunctions::clear_screen();
+				std::cout << R"(COMMANDS:
+ctrl + alt + shift + k - Value Calculation Mode
+ctrl + alt + shift + L - Auto Select Mode)" << std::endl;
+				break;
+			}
+
+			break;
+		}
+	}
 
 	// call the next hook in the hook chain. This is nessecary or your hook chain will break and the hook stops
 	return CallNextHookEx(_hook, nCode, wParam, lParam);
@@ -166,8 +188,7 @@ int main()
 		return -1;
 	}
 #pragma endregion
-
-	_setmode(_fileno(stdout), _O_U16TEXT);
+	_setmode(_fileno(stdout), _O_U8TEXT);
 
 	std::wcout << LR"(
                           ████████                ███████
@@ -199,7 +220,6 @@ int main()
 ▄█████████▀   ▀█████▀        ▀█   █▀   ▀██████▀   ▄████████▀  ████████▀    ███   ▀█▀   ███    █▀  
                                                                            ▀                      
 )" << std::endl;
-
 
 	// Set the hook
 	SetHook();
