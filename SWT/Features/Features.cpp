@@ -148,7 +148,11 @@ void EquationClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 
 	{
 		std::string temp = "Calculated " + std::string(EquationClass::InputStorageArray) + " = " + EquationOutput + '\n';
-		LoggingClass::LogEvent((char*)temp.c_str());
+
+		DynamicArray<char> tempArray = DynamicArray<char>();
+		tempArray.ArrayAppend((char*)temp.c_str(), temp.length(), false);
+
+		LoggingClass::LoggingDynamicArray.Append(tempArray);
 	} // putting temp in lower scope so it gets cleared
 
 	// clear InputStorageArray array and zero Array Index Pointer
@@ -163,9 +167,9 @@ void EquationClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 	}
 
 	printf("====Logs====\n");
-	for (int i = 0; i < LoggingClass::LoggingArrayIndexPointer; i++)
+	for (DynamicArray<char> ChAr : LoggingClass::LoggingDynamicArray)
 	{
-		printf(LoggingClass::LoggingArray[i]);
+		printf(ChAr.GetArray());
 	}
 }
 #pragma endregion
@@ -261,53 +265,21 @@ void AutoSelectClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 	
 	{
 		std::string temp = "Moved " + std::to_string(DirectionCount) + " Spaces Right" + '\n';
-		LoggingClass::LogEvent((char*)temp.c_str());
+
+		DynamicArray<char> tempArray = DynamicArray<char>();
+		tempArray.ArrayAppend((char*)temp.c_str(), temp.length(), false);
+
+		LoggingClass::LoggingDynamicArray.Append(tempArray);
 	} // putting temp in lower scope so it gets cleared
 
 	printf("====Logs====\n");
-	for (int i = 0; i < LoggingClass::LoggingArrayIndexPointer; i++)
+	for (DynamicArray<char> ChAr : LoggingClass::LoggingDynamicArray)
 	{
-		printf(LoggingClass::LoggingArray[i]);
+		printf(ChAr.GetArray());
 	}
 }
 #pragma endregion
 
 #pragma region Logging Region
-char** LoggingClass::LoggingArray = new char*[LoggingArraySize];
-int LoggingClass::LoggingArrayIndexPointer = 0;
-int LoggingClass::LoggingArraySize = 8;
-int LoggingClass::ArrayStep = 10;
-bool LoggingClass::LogEvent(char* StringToAdd)
-{
-	try
-	{
-		if (LoggingArrayIndexPointer >= LoggingArraySize)
-		{
-			char** TwoDimensionalTemp = new char* [LoggingArraySize](); // create temp pointer array of pointer arrays
-
-			for (int i = 0; i < LoggingArraySize; i++) // copy data
-			{
-				TwoDimensionalTemp[i] = LoggingArray[i];
-			}
-
-			LoggingArraySize += ArrayStep;
-			LoggingArray = new char* [LoggingArraySize](); // increase array
-
-			for (int i = 0; i < LoggingArraySize - ArrayStep; i++) // copy data back
-			{
-				LoggingArray[i] = TwoDimensionalTemp[i];
-			}
-
-			delete[] TwoDimensionalTemp; //delete array of temp
-		}
-
-		LoggingArray[LoggingArrayIndexPointer] = StringToAdd;
-		LoggingArrayIndexPointer++;
-	}
-	catch (...)
-	{
-		return false;
-	}
-	return true;
-}
+DynamicArray<DynamicArray<char>> LoggingClass::LoggingDynamicArray = DynamicArray<DynamicArray<char>>(2, 4);
 #pragma endregion

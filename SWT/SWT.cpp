@@ -9,6 +9,7 @@
 #include <conio.h>
 
 #include "./Features/Features.h"
+#include "DynamicArray/DynamicArray.h"
 
 // Hook Variable
 HHOOK _hook;

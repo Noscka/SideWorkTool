@@ -26,9 +26,6 @@
     <ClCompile Include="Features\Features.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DynamicArray\DynamicArray.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TinyExpr\tinyexpr.h">

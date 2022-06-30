@@ -173,7 +173,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DynamicArray\DynamicArray.cpp" />
     <ClCompile Include="Features\Features.cpp" />
     <ClCompile Include="SWT.cpp" />
     <ClCompile Include="TinyExpr\tinyexpr.c" />

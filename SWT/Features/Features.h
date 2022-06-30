@@ -2,7 +2,7 @@
 #include <string>
 #include <Windows.h>
 #include "../TinyExpr/tinyexpr.h"
-
+#include "../DynamicArray/DynamicArray.h"
 #include <iostream>
 
 
@@ -48,10 +48,5 @@ public:
 static class LoggingClass
 {
 public:
-	static char** LoggingArray; // Logging Array Char Array
-	static int LoggingArraySize; // InputStorageArray Array Size
-	static int LoggingArrayIndexPointer; // Auto Select Array Index Pointer
-	static int ArrayStep; // how much the array will get increased by when it reaches the limit
-
-	static bool LogEvent(char Character[]);
+	static DynamicArray<DynamicArray<char>> LoggingDynamicArray;
 };
