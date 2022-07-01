@@ -114,7 +114,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 			case 56: // 8
 			case 57: // 9
 				std::wcout << UnicodeCharacter;
-				AutoSelectClass::AddToDynamicCharArray(UnicodeCharacter[0]);
+				AutoSelectClass::InputStorageArray.Append(UnicodeCharacter[0]);
 				return -1;
 
 			case 8: // {BACKSPACE}

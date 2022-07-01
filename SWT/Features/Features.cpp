@@ -1,7 +1,5 @@
 #include "Features.h"
 
-#define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
-
 #pragma region GlobalFunctions
 COORD GlobalFunctions::GetConsoleCursorPosition(HANDLE hConsoleOutput)
 {
@@ -148,75 +146,36 @@ void EquationClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 
 #pragma region Auto Select Region
 bool AutoSelectClass::Enabled = false;
-char *AutoSelectClass::InputStorageArray = new char[InputStorageArraySize]();
-int AutoSelectClass::InputStorageArrayIndexPointer = 0;
-int AutoSelectClass::InputStorageArraySize = 128;
-int AutoSelectClass::ArrayStep = 20;
-bool AutoSelectClass::AddToDynamicCharArray(char CharaterToAdd)
-{
-	try
-	{
-		if (InputStorageArrayIndexPointer >= InputStorageArraySize) // if Current Index pointer is more then the array size (trying to add to OutOfRange space)
-		{
-			char* TempArray = new char[InputStorageArraySize](); // Create new array which will store the original values
+DynamicArray<wchar_t> AutoSelectClass::InputStorageArray = DynamicArray<wchar_t>(20, 10);
 
-			for (int i = 0; i < InputStorageArraySize; i++) // assign/copy all values from CharArray to Temp
-			{
-				TempArray[i] = InputStorageArray[i];
-			}
-
-			InputStorageArraySize += ArrayStep; // expand the Array size
-			InputStorageArray = new char[InputStorageArraySize](); // over ride CharArray with new, bigger, array
-
-			/*
-			ArraySize-2 calculates TempArray size
-			Copy all values from Temp array to "old" expanded array
-			*/
-			for (int i = 0; i < InputStorageArraySize - ArrayStep; i++)
-			{
-				InputStorageArray[i] = TempArray[i];
-			}
-
-			delete[] TempArray;
-		}
-
-		InputStorageArray[InputStorageArrayIndexPointer] = CharaterToAdd;
-		InputStorageArrayIndexPointer++;
-	}
-	catch (...)
-	{
-		return false;
-	}
-	return true;
-}
 void AutoSelectClass::RemovePreviousCharacter()
 {
 	// Coord for backspace cursor position editing
 	COORD NewCoord;
 
-	if (AutoSelectClass::InputStorageArrayIndexPointer > 0)
+	if (AutoSelectClass::InputStorageArray.ArrayIndexPointer > 0)
 	{
 		NewCoord = { (SHORT)(GlobalFunctions::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GlobalFunctions::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y }; // create new coord with x-1 and same y
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // use new coord
 		wprintf(L" "); // delete character
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // go back 1 space
-		AutoSelectClass::InputStorageArrayIndexPointer--;
+		AutoSelectClass::InputStorageArray.ArrayIndexPointer--;
 	}
-	AutoSelectClass::InputStorageArray[AutoSelectClass::InputStorageArrayIndexPointer] = NULL;
+	AutoSelectClass::InputStorageArray[AutoSelectClass::InputStorageArray.ArrayIndexPointer] = NULL;
 }
+
 void AutoSelectClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 {
 	GlobalFunctions::clear_screen();
 
 	int DirectionCount = 0;
-	std::string StrInput = AutoSelectClass::InputStorageArray;
+	std::wstring StrInput = AutoSelectClass::InputStorageArray.GetArray();
 
 	if (!StrInput.empty())
 	{
 		DirectionCount = std::stoi(StrInput);
 		// clear Auto Select array and zero Array Index Pointer
-		AutoSelectClass::InputStorageArray = new char[AutoSelectClass::InputStorageArraySize]();
-		AutoSelectClass::InputStorageArrayIndexPointer = 0;
+		AutoSelectClass::InputStorageArray.Clear();
 
 		//keybd_event(VK_SHIFT, (UINT)kbdStruct.scanCode, 0, 0);
 
@@ -236,7 +195,7 @@ void AutoSelectClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 	AutoSelectClass::Enabled = false;
 	
 	{
-		std::string temp = "Moved " + std::to_string(DirectionCount) + " Spaces Right" + '\n';
+		std::wstring temp = L"Moved " + std::to_wstring(DirectionCount) + L" Spaces Right" + L'\n';
 
 		DynamicArray<wchar_t> tempArray = DynamicArray<wchar_t>();
 		tempArray.ArrayAppend((wchar_t*)temp.c_str(), temp.length(), false);
