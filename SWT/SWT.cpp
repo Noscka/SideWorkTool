@@ -178,7 +178,9 @@ void ReleaseHook()
 
 int main()
 {
-#pragma region ProgramAlreadyrunningcheck
+	SetConsoleTitle(L"SWT By Noscka");
+
+#pragma region Program Already Running Check
 	CreateMutexA(0, FALSE, "Local\\$myprogram$"); // try to create a named mutex
 	if (GetLastError() == ERROR_ALREADY_EXISTS) // Quit if mutex already exists (program already running)
 	{
@@ -242,7 +244,12 @@ Begin by pressing h
 			switch (msg.wParam)
 			{
 			case EquationEnableHK:
+				if (AutoSelectClass::Enabled) // Check if Auto Select is enabled (will need a function for all)
+					break;
+
 				EquationClass::Enabled = !EquationClass::Enabled;
+
+				GlobalFunctions::clear_screen();
 
 				if (EquationClass::Enabled)
 				{
@@ -255,8 +262,21 @@ Begin by pressing h
 				break;
 
 			case AutoSelectHK:
-				wprintf(L"Input amount to go right by: ");
-				AutoSelectClass::Enabled = true;
+				if (EquationClass::Enabled) // Check if Equation is enabled (will need a function for all)
+					break;
+
+				AutoSelectClass::Enabled = !AutoSelectClass::Enabled;
+
+				GlobalFunctions::clear_screen();
+
+				if (AutoSelectClass::Enabled)
+				{
+					wprintf(L"Input amount to go right by: ");
+				}
+				else
+				{
+					wprintf(L"Stopped Auto Select Mode\n");
+				}
 				break;
 			}
 		}
