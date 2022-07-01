@@ -1,5 +1,7 @@
 #include "Features.h"
 
+#define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
+
 #pragma region GlobalFunctions
 COORD GlobalFunctions::GetConsoleCursorPosition(HANDLE hConsoleOutput)
 {
@@ -27,11 +29,6 @@ void GlobalFunctions::clear_screen(char fill)
 	SetConsoleCursorPosition(console, tl);
 }
 
-/// <summary>
-/// Check if String is just numbers
-/// </summary>
-/// <param name="str">String to Check</param>
-/// <returns>True if only numbers, False if not just numbers</returns>
 bool GlobalFunctions::isNumber(const std::string& str)
 {
 	for (char const& c : str)
@@ -41,11 +38,6 @@ bool GlobalFunctions::isNumber(const std::string& str)
 	return true;
 }
 
-/// <summary>
-/// Get data from lParam to determine which key was pressed
-/// </summary>
-/// <param name="lParam">lParam from hook</param>
-/// <returns>wchar_t array</returns>
 wchar_t* GlobalFunctions::GetUnicodeCharacter(LPARAM lParam, KBDLLHOOKSTRUCT kbdStruct)
 {
 	// KeyBoardState BYTE array
@@ -70,66 +62,46 @@ wchar_t* GlobalFunctions::GetUnicodeCharacter(LPARAM lParam, KBDLLHOOKSTRUCT kbd
 
 	return UnicodeCharacter;
 }
+
+std::wstring GlobalFunctions::to_wstring(const std::string& str)
+{
+	if (str.empty()) return std::wstring();
+	int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
+	std::wstring wstrTo(size_needed, 0);
+	MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
+	return wstrTo;
+}
+
+std::string GlobalFunctions::to_string(const std::wstring& wstr)
+{
+	if (wstr.empty()) return std::string();
+	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
+	std::string strTo(size_needed, 0);
+	WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
+	return strTo;
+}
 #pragma endregion
 
 #pragma region Equation Region
 bool EquationClass::Enabled = false;
-char* EquationClass::InputStorageArray = new char[InputStorageArraySize]();
-int EquationClass::InputStorageArrayIndexPointer = 0;
-int EquationClass::InputStorageArraySize = 128;
-int EquationClass::ArrayStep = 20;
-bool EquationClass::AddToDynamicCharArray(char CharaterToAdd)
-{
-	try
-	{
-		if (InputStorageArrayIndexPointer >= InputStorageArraySize) // if Current Index pointer is more then the array size (trying to add to OutOfRange space)
-		{
-			char* TempArray = new char[InputStorageArraySize](); // Create new array which will store the original values
 
-			for (int i = 0; i < InputStorageArraySize; i++) // assign/copy all values from CharArray to Temp
-			{
-				TempArray[i] = InputStorageArray[i];
-			}
+DynamicArray<wchar_t> EquationClass::InputStorageArray = DynamicArray<wchar_t>(40, 40);
 
-			InputStorageArraySize += ArrayStep; // expand the Array size
-			InputStorageArray = new char[InputStorageArraySize](); // over ride CharArray with new, bigger, array
-
-			/*
-			ArraySize-2 calculates TempArray size
-			Copy all values from Temp array to "old" expanded array
-			*/
-			for (int i = 0; i < InputStorageArraySize - ArrayStep; i++)
-			{
-				InputStorageArray[i] = TempArray[i];
-			}
-
-			delete[] TempArray;
-		}
-
-		InputStorageArray[InputStorageArrayIndexPointer] = CharaterToAdd;
-		InputStorageArrayIndexPointer++;
-	}
-	catch (...)
-	{
-		return false;
-	}
-	return true;
-}
 void EquationClass::RemovePreviousCharacter()
 {
 	// Coord for backspace cursor position editing
 	COORD NewCoord;
 
-	if (EquationClass::InputStorageArrayIndexPointer > 0)
+	if (EquationClass::InputStorageArray.ArrayIndexPointer > 0)
 	{
 		NewCoord = { (SHORT)(GlobalFunctions::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GlobalFunctions::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y }; // create new coord with x-1 and same y
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // use new coord
 		wprintf(L" "); // delete character
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // go back 1 space
-		EquationClass::InputStorageArrayIndexPointer--;
+		EquationClass::InputStorageArray.ArrayIndexPointer--;
 	}
 
-	EquationClass::InputStorageArray[EquationClass::InputStorageArrayIndexPointer] = NULL;
+	EquationClass::InputStorageArray[EquationClass::InputStorageArray.ArrayIndexPointer] = NULL;
 }
 void EquationClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 {
@@ -137,17 +109,18 @@ void EquationClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 
 	GlobalFunctions::clear_screen();
 
-	double EquationDoubleOutput = te_interp(EquationClass::InputStorageArray, 0); // intepret and solve the equation
+	double EquationDoubleOutput = te_interp(GlobalFunctions::to_string(EquationClass::InputStorageArray.Array).c_str(), 0); // intepret and solve the equation
 
 	//std::cout << EquationClass::InputStorageArray << " = " << EquationDoubleOutput << "\n"; // display full equation with answer
 
 	// convert InputStorageArray Answer to string with removing trailing 0s
-	std::string EquationOutput = std::to_string(EquationDoubleOutput);
+
+	std::wstring EquationOutput = std::to_wstring(EquationDoubleOutput);
 	EquationOutput.erase(EquationOutput.find_last_not_of('0') + 1, std::string::npos);
 	EquationOutput.erase(EquationOutput.find_last_not_of('.') + 1, std::string::npos);
 
 	{
-		std::string temp = "Calculated " + std::string(EquationClass::InputStorageArray) + " = " + EquationOutput + '\n';
+		std::wstring temp = L"Calculated " + std::wstring(EquationClass::InputStorageArray.Array) + L" = " + EquationOutput + L'\n';
 
 		DynamicArray<wchar_t> tempArray = DynamicArray<wchar_t>();
 		tempArray.ArrayAppend((wchar_t*)temp.c_str(), temp.length(), false);
@@ -156,8 +129,7 @@ void EquationClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 	} // putting temp in lower scope so it gets cleared
 
 	// clear InputStorageArray array and zero Array Index Pointer
-	EquationClass::InputStorageArray = new char[EquationClass::InputStorageArraySize]();
-	EquationClass::InputStorageArrayIndexPointer = 0;
+	EquationClass::InputStorageArray.Clear();
 
 	// for loop for each character in equation answer and simulate keyboard event
 	for (char ch : EquationOutput)

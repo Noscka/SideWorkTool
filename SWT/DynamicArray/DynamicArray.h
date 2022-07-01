@@ -5,14 +5,15 @@ template<class ArrayDataType>
 class DynamicArray
 {
 private:
+	typedef ArrayDataType* iterator;
+	typedef const ArrayDataType* const_iterator;
+
+public:
 	int ArraySize;			// Array starting size and the size after it is resized
 	ArrayDataType* Array;	// Pointer to Array
 	int ArrayIndexPointer;	// keeps track amount of objects in array
 	int ArrayStepSize;		// how much the array will get increased by when it reaches the limit
 
-	typedef ArrayDataType* iterator;
-	typedef const ArrayDataType* const_iterator;
-public:
 #pragma region Constructors
 	/// <summary>
 	/// Constructor to set all the variables
@@ -147,6 +148,14 @@ public:
 		ArrayIndexPointer--;
 	}
 
+	/// <summary>
+	/// Clear the dynamic array to the original size
+	/// </summary>
+	void Clear()																		// basically restart the array
+	{
+		ArrayIndexPointer = 0;
+		Array = new ArrayDataType[ArraySize]();
+	}
 #pragma endregion
 
 #pragma region Variables

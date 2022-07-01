@@ -52,7 +52,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 			case 56: // 8
 			case 57: // 9
 				std::wcout << UnicodeCharacter;
-				EquationClass::AddToDynamicCharArray(UnicodeCharacter[0]);
+				EquationClass::InputStorageArray.Append(UnicodeCharacter[0]);
 				return -1;
 
 			case 8: // {BACKSPACE}
@@ -60,28 +60,28 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 				return -1;
 
 			case 47: // /
-				printf("/");
-				EquationClass::AddToDynamicCharArray(UnicodeCharacter[0]);
+				wprintf(L"/");
+				EquationClass::InputStorageArray.Append(UnicodeCharacter[0]);
 				return -1;
 
 			case 43: // +
-				printf("+");
-				EquationClass::AddToDynamicCharArray(UnicodeCharacter[0]);
+				wprintf(L"+");
+				EquationClass::InputStorageArray.Append(UnicodeCharacter[0]);
 				return -1;
 
 			case 45: // -
-				printf("-");
-				EquationClass::AddToDynamicCharArray(UnicodeCharacter[0]);
+				wprintf(L"-");
+				EquationClass::InputStorageArray.Append(UnicodeCharacter[0]);
 				return -1;
 
 			case 42: // *
-				printf("*");
-				EquationClass::AddToDynamicCharArray(UnicodeCharacter[0]);
+				wprintf(L"*");
+				EquationClass::InputStorageArray.Append(UnicodeCharacter[0]);
 				return -1;
 
 			case 46: // .
-				printf(".");
-				EquationClass::AddToDynamicCharArray(UnicodeCharacter[0]);
+				wprintf(L".");
+				EquationClass::InputStorageArray.Append(UnicodeCharacter[0]);
 				return -1;
 
 			case 13: // {ENTER}
