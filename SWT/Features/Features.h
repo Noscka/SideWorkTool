@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include "../TinyExpr/tinyexpr.h"
 #include "../DynamicArray/DynamicArray.h"
+#include "../ConsoleSection/ConsoleSection.h"
 #include <iostream>
 
 #include <codecvt>
@@ -56,6 +57,10 @@ public:
 
 static class LoggingClass
 {
-public:
+private:
+	static ConsoleSection LoggingSection;
 	static DynamicArray<DynamicArray<wchar_t>> LoggingDynamicArray;
+public:
+	static void WriteLog(wchar_t* LogTest, int LogLength);
+	static void Refresh();
 };
