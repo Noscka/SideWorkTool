@@ -221,8 +221,7 @@ int main()
   ███    ███ ███   ███      ███   ███ ███    ███    ▄█    ███ ███    ███   ███ ▀███▄   ███    ███ 
 ▄█████████▀   ▀█████▀        ▀█   █▀   ▀██████▀   ▄████████▀  ████████▀    ███   ▀█▀   ███    █▀  
                                                                            ▀                      
-Begin by pressing h
-)" << std::endl;
+Begin by pressing h)";
 
 	// Set the hook
 	SetHook();
@@ -250,7 +249,6 @@ Begin by pressing h
 				EquationClass::Enabled = !EquationClass::Enabled;
 
 				GlobalFunctions::clear_screen();
-				LoggingClass::Refresh();
 
 				if (EquationClass::Enabled)
 				{
@@ -269,7 +267,6 @@ Begin by pressing h
 				AutoSelectClass::Enabled = !AutoSelectClass::Enabled;
 
 				GlobalFunctions::clear_screen();
-				LoggingClass::Refresh();
 
 				if (AutoSelectClass::Enabled)
 				{

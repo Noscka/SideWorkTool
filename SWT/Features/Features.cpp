@@ -132,11 +132,11 @@ void EquationClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 		keybd_event(VkKeyScanExA(ch, GetKeyboardLayout(0)), (UINT)kbdStruct.scanCode, KEYEVENTF_KEYUP, 0);
 	}
 
-	/*wprintf(L"====Logs====\n");
+	wprintf(L"====Logs====\n");
 	for (DynamicArray<wchar_t> ChAr : LoggingClass::LoggingDynamicArray)
 	{
 		wprintf(ChAr.GetArray());
-	}*/
+	}
 }
 #pragma endregion
 
@@ -196,24 +196,22 @@ void AutoSelectClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 		LoggingClass::WriteLog((wchar_t*)temp.c_str(), temp.length());
 	} // putting temp in lower scope so it gets cleared
 
+	wprintf(L"====Logs====\n");
+	for (DynamicArray<wchar_t> ChAr : LoggingClass::LoggingDynamicArray)
+	{
+		wprintf(ChAr.GetArray());
+	}
+
 }
 #pragma endregion
 
 #pragma region Logging Region
 DynamicArray<DynamicArray<wchar_t>> LoggingClass::LoggingDynamicArray = DynamicArray<DynamicArray<wchar_t>>(2, 4);
-ConsoleSection LoggingClass::LoggingSection = ConsoleSection(Bottom, 0);
 
 void LoggingClass::WriteLog(wchar_t* LogTest, int LogLength)
 {
 	DynamicArray<wchar_t> tempArray = DynamicArray<wchar_t>();
 	tempArray.ArrayAppend(LogTest, LogLength, false);
 	LoggingDynamicArray.Append(tempArray);
-
-	LoggingSection.Append(LogTest);
-}
-
-void LoggingClass::Refresh()
-{
-	LoggingSection.Refresh();
 }
 #pragma endregion

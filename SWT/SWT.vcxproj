@@ -173,13 +173,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConsoleSection\ConsoleSection.cpp" />
     <ClCompile Include="Features\Features.cpp" />
     <ClCompile Include="SWT.cpp" />
     <ClCompile Include="TinyExpr\tinyexpr.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConsoleSection\ConsoleSection.h" />
     <ClInclude Include="DynamicArray\DynamicArray.h" />
     <ClInclude Include="Features\Features.h" />
     <ClInclude Include="Resource%28Icons%29\resource.h" />
