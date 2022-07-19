@@ -7,6 +7,7 @@
 
 #include "../DynamicArray/DynamicArray.h"
 #include "../ImprovedDynamicMenu/DynamicMenu.h"
+#include "../Features/Features.h"
 
 class Option
 {

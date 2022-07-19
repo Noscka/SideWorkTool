@@ -183,7 +183,7 @@ bool Option::stob(std::wstring s, bool throw_on_error)
 
     if (is.fail() && throw_on_error)
     {
-        //throw std::invalid_argument(GlobalFunctions::to_string(s.append(L"Unable to convert to bool")));
+        throw std::invalid_argument(GlobalFunctions::to_string(s.append(L"Unable to convert to bool")));
     }
 
     return result;
