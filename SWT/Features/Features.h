@@ -1,12 +1,14 @@
 #pragma once
 #include <string>
 #include <Windows.h>
-#include "../TinyExpr/tinyexpr.h"
-#include "../DynamicArray/DynamicArray.h"
 #include <iostream>
-
 #include <codecvt>
 #include <locale>
+
+#include "../TinyExpr/tinyexpr.h"
+#include "../DynamicArray/DynamicArray.h"
+#include "../ImprovedDynamicMenu/DynamicMenu.h"
+#include "../Options/Options.h"
 
 static class GlobalFunctions
 {
@@ -30,6 +32,16 @@ public:
 
 	static std::wstring to_wstring(const std::string& str);
 	static std::string to_string(const std::wstring& wstr);
+};
+
+static class SettingsClass
+{
+public:
+	static DynamicMenu SettingsMenu;
+
+	static bool ShowCaret;
+
+	static void initialize();
 };
 
 static class EquationClass

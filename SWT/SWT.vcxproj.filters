@@ -26,6 +26,12 @@
     <ClCompile Include="Features\Features.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ImprovedDynamicMenu\DynamicMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Options\Options.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TinyExpr\tinyexpr.h">
@@ -38,6 +44,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DynamicArray\DynamicArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ImprovedDynamicMenu\UnicodeTextGenerator\UnicodeTextGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ImprovedDynamicMenu\DynamicMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Options\Options.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -80,6 +80,35 @@ std::string GlobalFunctions::to_string(const std::wstring& wstr)
 }
 #pragma endregion
 
+#pragma region Settings Region
+DynamicMenu SettingsClass::SettingsMenu = DynamicMenu(L"Settings", false, false, false);
+
+bool SettingsClass::ShowCaret = true;
+
+void QuitAndSave()
+{
+	SettingsClass::SettingsMenu.ContinueMenu = false;
+	Option::WriteOptions();
+}
+
+void SettingsClass::initialize()
+{
+	// Create Option Objects
+	Option* ShowCaretOption = new Option(L"Show Caret", &ShowCaret);
+
+	// Parse Option
+	Option::ParseOptions();
+
+	// Add to menu
+	for (Option* op : Option::OptionsArray)
+		SettingsMenu.AddMenuEntry(op->ReturnMenuEntry());
+
+	SettingsMenu.AddMenuEntry(MenuEntry(L"Quit", QuitAndSave));
+
+	Option::WriteOptions();
+}
+#pragma endregion
+
 #pragma region Equation Region
 bool EquationClass::Enabled = false;
 

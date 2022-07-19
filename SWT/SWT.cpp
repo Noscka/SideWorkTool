@@ -12,6 +12,7 @@
 
 #include "./Features/Features.h"
 #include "DynamicArray/DynamicArray.h"
+#include "ImprovedDynamicMenu/DynamicMenu.h"
 
 // Hook Variable
 HHOOK _hook;
@@ -144,7 +145,8 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 				GlobalFunctions::clear_screen();
 				std::wcout << LR"(COMMANDS:
 ctrl + alt + shift + k - Value Calculation Mode
-ctrl + alt + shift + L - Auto Select Mode)" << std::endl;
+ctrl + alt + shift + L - Auto Select Mode
+ctrl + alt + shift + S - Settings)" << std::endl;
 				break;
 			}
 
@@ -226,13 +228,18 @@ Begin by pressing h)";
 	// Set the hook
 	SetHook();
 
+	// initialize Settings menu
+	SettingsClass::initialize();
+
 	enum
 	{
 		EquationEnableHK = 1, // Ctrl+Shift+alt+k - Enable Input
-		AutoSelectHK = 2 // Ctrl+Shift+alt+L - Run Auto Select Function
+		AutoSelectHK = 2, // Ctrl+Shift+alt+L - Run Auto Select Function
+		SettingsHK = 3, // Ctrl+Shift+alt+S - Opens Settings menu
 	};
 	RegisterHotKey(0, EquationEnableHK, MOD_SHIFT | MOD_CONTROL | MOD_ALT, 'K'); // register 1 key as hotkey
 	RegisterHotKey(0, AutoSelectHK, MOD_SHIFT | MOD_CONTROL | MOD_ALT, 'L'); // register 2 key as hotkey
+	RegisterHotKey(0, SettingsHK, MOD_SHIFT | MOD_CONTROL | MOD_ALT, 'S'); // register 3 key as hotkey
 	MSG msg;
 	while(GetMessage(&msg, 0, 0, 0))
 	{
@@ -277,6 +284,18 @@ Begin by pressing h)";
 					wprintf(L"Stopped Auto Select Mode\n");
 				}
 				break;
+
+			case SettingsHK:
+			{
+				ReleaseHook();
+				GlobalFunctions::clear_screen();
+
+				SettingsClass::SettingsMenu.StartMenu();
+				
+				GlobalFunctions::clear_screen();
+				SetHook();
+				break;
+			}
 			}
 		}
 	}
