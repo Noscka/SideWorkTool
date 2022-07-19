@@ -6,7 +6,7 @@
 # SWT
 Ever wanted to double the value lenght of a box but you had to go to google and type in the equation? well SWT (Side Working Tool) is made just for this and (in the future) many more small but annoying problems while working. it is a simple program made to assist when working on projects. While it was aimed at programming projects, it can be used with anything else that has writable text.
 
-The program uses many clever (at least in my eyes) tricks such as [Dynamic Array object/class](https://github.com/Noscka/Dynamically-Sized-Array-Object), [Console Sectioning](https://github.com/Noscka/Console-Section), [Low Level keyboard hook](https://github.com/Ruski1/LowLevelKeyboardhook-Tutorial), Hot keys and more!
+The program uses many clever (at least in my eyes) tricks such as [Improved Dynamic Menu](https://github.com/Noscka/Improved-Dynamic-Menu), [Dynamic Array object/class](https://github.com/Noscka/Dynamically-Sized-Array-Object), [Console Sectioning](https://github.com/Noscka/Console-Section), [Low Level keyboard hook](https://github.com/Ruski1/LowLevelKeyboardhook-Tutorial), Hot keys and more!
 
 ## Features
  - ### Value Calculations
