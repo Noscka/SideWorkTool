@@ -92,7 +92,7 @@ void GlobalFunctions::ShowCaret(bool showFlag)
 #pragma endregion
 
 #pragma region Settings Region
-DynamicMenu SettingsClass::SettingsMenu = DynamicMenu(L"Settings", false, false, false);
+DynamicMenu SettingsClass::SettingsMenu = DynamicMenu(L"Settings", false, false, true);
 
 bool SettingsClass::ShowCaret = true;
 
@@ -108,7 +108,8 @@ void SettingsClass::initialize()
 	for (Option* op : Option::OptionsArray)
 		SettingsMenu.AddMenuEntry(op->ReturnMenuEntry());
 
-	SettingsMenu.AddMenuEntry(MenuEntry(L"Quit", QuitAndSave));
+	// Add custom Quit option
+	SettingsMenu.AddMenuEntry(MenuEntry(L"Quit And Save", QuitAndSave));
 
 	Option::WriteOptions();
 
