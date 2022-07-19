@@ -32,6 +32,8 @@ public:
 
 	static std::wstring to_wstring(const std::string& str);
 	static std::string to_string(const std::wstring& wstr);
+
+	static void ShowCaret(bool showFlag);
 };
 
 static class SettingsClass
@@ -42,6 +44,9 @@ public:
 	static bool ShowCaret;
 
 	static void initialize();
+
+	static void QuitAndSave();
+	static void ApplyChanges();
 };
 
 static class EquationClass

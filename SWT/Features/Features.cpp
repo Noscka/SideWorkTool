@@ -78,18 +78,23 @@ std::string GlobalFunctions::to_string(const std::wstring& wstr)
 	WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
 	return strTo;
 }
+
+void GlobalFunctions::ShowCaret(bool showFlag)
+{
+	HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	CONSOLE_CURSOR_INFO     cursorInfo;
+
+	GetConsoleCursorInfo(out, &cursorInfo);
+	cursorInfo.bVisible = showFlag; // set the cursor visibility
+	SetConsoleCursorInfo(out, &cursorInfo);
+}
 #pragma endregion
 
 #pragma region Settings Region
 DynamicMenu SettingsClass::SettingsMenu = DynamicMenu(L"Settings", false, false, false);
 
 bool SettingsClass::ShowCaret = true;
-
-void QuitAndSave()
-{
-	SettingsClass::SettingsMenu.ContinueMenu = false;
-	Option::WriteOptions();
-}
 
 void SettingsClass::initialize()
 {
@@ -106,6 +111,21 @@ void SettingsClass::initialize()
 	SettingsMenu.AddMenuEntry(MenuEntry(L"Quit", QuitAndSave));
 
 	Option::WriteOptions();
+
+	ApplyChanges();
+}
+
+void SettingsClass::QuitAndSave()
+{
+	SettingsClass::SettingsMenu.ContinueMenu = false;
+	Option::WriteOptions();
+
+	ApplyChanges();
+}
+
+void SettingsClass::ApplyChanges()
+{
+	GlobalFunctions::ShowCaret(ShowCaret);
 }
 #pragma endregion
 
