@@ -96,13 +96,13 @@ DynamicMenu SettingsClass::SettingsMenu = DynamicMenu(L"Settings", false, false,
 
 bool SettingsClass::ShowCaret = true;
 
-void SettingsClass::initialize()
+void SettingsClass::initialize(LoadingScreen* Object)
 {
 	// Create Option Objects
 	Option* ShowCaretOption = new Option(L"Show Caret", &ShowCaret);
 
 	// Parse Option
-	Option::ParseOptions();
+	Option::ParseOptions(Object);
 
 	// Add to menu
 	for (Option* op : Option::OptionsArray)

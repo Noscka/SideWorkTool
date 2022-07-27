@@ -175,6 +175,7 @@
   <ItemGroup>
     <ClCompile Include="Features\Features.cpp" />
     <ClCompile Include="ImprovedDynamicMenu\DynamicMenu.cpp" />
+    <ClCompile Include="LoadingScreen\LoadingScreen.cpp" />
     <ClCompile Include="Options\Options.cpp" />
     <ClCompile Include="SWT.cpp" />
     <ClCompile Include="TinyExpr\tinyexpr.c" />
@@ -184,15 +185,22 @@
     <ClInclude Include="Features\Features.h" />
     <ClInclude Include="ImprovedDynamicMenu\DynamicMenu.h" />
     <ClInclude Include="ImprovedDynamicMenu\UnicodeTextGenerator\UnicodeTextGenerator.h" />
+    <ClInclude Include="LoadingScreen\LoadingScreen.h" />
     <ClInclude Include="Options\Options.h" />
-    <ClInclude Include="Resource%28Icons%29\resource.h" />
+    <ClInclude Include="Resource\resource.h" />
     <ClInclude Include="TinyExpr\tinyexpr.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource(Icons)\SWT.rc" />
+    <ResourceCompile Include="Resource\SWT.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Logo\Logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="LoadingScreen\Resource\CustomConsola.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

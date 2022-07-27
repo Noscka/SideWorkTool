@@ -13,6 +13,7 @@
 #include "./Features/Features.h"
 #include "DynamicArray/DynamicArray.h"
 #include "ImprovedDynamicMenu/DynamicMenu.h"
+#include "LoadingScreen/LoadingScreen.h"
 
 // Hook Variable
 HHOOK _hook;
@@ -192,9 +193,36 @@ int main()
 		return -1;
 	}
 #pragma endregion
-	_setmode(_fileno(stdout), _O_U8TEXT);
+	_setmode(_fileno(stdout), _O_U16TEXT);
 
-	std::wcout << LR"(
+	LoadingScreen::InitilizeFont();
+	
+#pragma region Loading Screen
+	std::wstring splash = LR"(
+                          ████████                ███████
+                        ▄██▀    ▀██▄ ▄███████▄  ███▀   ▀████████▄
+              ▄███████████▌      ██████     ▀█████       ███     ▀▀███▄
+         ▄██▀▀         ██▌        ████       ████▌       ███           ▀▀███▄
+       ██▀            ███         ███▌       ▐███        ▐██▄               ▀▀███▄
+     ██▀       ███    ███         ███▌       ▐███        ▐████▀                  ▀██
+    ██▌       ▀███▄▄▄▄███         ███        ▐███        ████▌                     ██
+    ██▌               ██▌         ███        ▐███        ███▌          ████▄▄     ▄██
+    ▀██▄              ██▌         ███        ▐███        ███          ███    ▀█████▀
+      ▀██████████████▄███         ███        ████       ███          ███
+        ██▀       ████▀██         ███        ▐██▌      ▐██▌          ██▌
+       ███             ██▌        ██▌         ██       ███▌         ███
+       ███             ▐██                            █████▄       ███
+        ▀██▄▄       ▄▄▄████▄                         ███   ▀███▄▄███▀
+           ▀▀▀███▀▀▀▀    ▀██▄         ▄██▄         ▄██▀
+                           ▀███▄▄▄▄▄███▀████▄▄▄▄▄███▀
+                               ▀▀▀▀▀        ▀▀▀▀▀)";
+
+	LoadingScreen basic = LoadingScreen(LoadingScreen::Unknown, &SettingsClass::initialize , splash);
+	basic.StartLoading();
+#pragma endregion
+
+
+	wprintf(LR"(
                           ████████                ███████
                         ▄██▀    ▀██▄ ▄███████▄  ███▀   ▀████████▄
               ▄███████████▌      ██████     ▀█████       ███     ▀▀███▄
@@ -223,13 +251,10 @@ int main()
   ███    ███ ███   ███      ███   ███ ███    ███    ▄█    ███ ███    ███   ███ ▀███▄   ███    ███ 
 ▄█████████▀   ▀█████▀        ▀█   █▀   ▀██████▀   ▄████████▀  ████████▀    ███   ▀█▀   ███    █▀  
                                                                            ▀                      
-Begin by pressing h)";
+Begin by pressing h)");
 
 	// Set the hook
 	SetHook();
-
-	// initialize Settings menu
-	SettingsClass::initialize();
 
 	enum
 	{
@@ -300,5 +325,6 @@ Begin by pressing h)";
 		}
 	}
 
+	LoadingScreen::TerminateFont();
 	return 0;
 }

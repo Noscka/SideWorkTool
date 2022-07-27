@@ -32,6 +32,9 @@
     <ClCompile Include="Options\Options.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LoadingScreen\LoadingScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TinyExpr\tinyexpr.h">
@@ -40,7 +43,7 @@
     <ClInclude Include="Features\Features.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource%28Icons%29\resource.h">
+    <ClInclude Include="Resource\resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DynamicArray\DynamicArray.h">
@@ -55,11 +58,20 @@
     <ClInclude Include="Options\Options.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LoadingScreen\LoadingScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Resource(Icons)\SWT.rc" />
+    <ResourceCompile Include="Resource\SWT.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Logo\Logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="LoadingScreen\Resource\CustomConsola.ttf" />
   </ItemGroup>
 </Project>

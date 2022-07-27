@@ -54,6 +54,14 @@ END
 // remains consistent on all systems.
 IDI_ICON1               ICON                    "C:\\Users\\Adam\\Documents\\Programing Projects\\C++\\SideWorkTool\\Logo\\Logo.ico"
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// XFONT
+//
+
+IDR_CUSTOM_CONSOLA_FONT XFONT                   "C:\\Users\\Adam\\Documents\\Programing Projects\\C++\\SideWorkTool\\SWT\\LoadingScreen\\Resource\\CustomConsola.ttf"
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 

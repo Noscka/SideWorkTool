@@ -9,6 +9,7 @@
 #include "../DynamicArray/DynamicArray.h"
 #include "../ImprovedDynamicMenu/DynamicMenu.h"
 #include "../Options/Options.h"
+#include "../LoadingScreen/LoadingScreen.h"
 
 static class GlobalFunctions
 {
@@ -43,7 +44,7 @@ public:
 
 	static bool ShowCaret;
 
-	static void initialize();
+	static void initialize(LoadingScreen* Object);
 
 	static void QuitAndSave();
 	static void ApplyChanges();

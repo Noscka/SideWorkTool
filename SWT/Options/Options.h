@@ -8,6 +8,7 @@
 #include "../DynamicArray/DynamicArray.h"
 #include "../ImprovedDynamicMenu/DynamicMenu.h"
 #include "../Features/Features.h"
+#include "../LoadingScreen/LoadingScreen.h"
 
 class Option
 {
@@ -26,7 +27,7 @@ public:
 
 	static void WriteOptions();
 
-	static bool ParseOptions();
+	static bool ParseOptions(LoadingScreen* Object);
 
 	static Option *FindOption(std::wstring OptionName);
 

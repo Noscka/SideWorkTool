@@ -26,7 +26,7 @@ void Option::WriteOptions()
 	file << (outputText).c_str();
 }
 
-bool Option::ParseOptions()
+bool Option::ParseOptions(LoadingScreen* Object)
 {
 	std::wifstream Read;
 	Read.open(OptionFileName);
