@@ -1,96 +1,5 @@
 #include "Features.h"
 
-#pragma region GlobalFunctions
-COORD GlobalFunctions::GetConsoleCursorPosition(HANDLE hConsoleOutput)
-{
-	CONSOLE_SCREEN_BUFFER_INFO cbsi;
-	if (GetConsoleScreenBufferInfo(hConsoleOutput, &cbsi))
-	{
-		return cbsi.dwCursorPosition;
-	}
-	else
-	{
-		// The function failed. Call GetLastError() for details.
-		return { 0, 0 };
-	}
-}
-
-void GlobalFunctions::clear_screen(char fill)
-{
-	COORD tl = { 0,0 };
-	CONSOLE_SCREEN_BUFFER_INFO s;
-	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
-	GetConsoleScreenBufferInfo(console, &s);
-	DWORD written, cells = s.dwSize.X * s.dwSize.Y;
-	FillConsoleOutputCharacter(console, fill, cells, tl, &written);
-	FillConsoleOutputAttribute(console, s.wAttributes, cells, tl, &written);
-	SetConsoleCursorPosition(console, tl);
-}
-
-bool GlobalFunctions::isNumber(const std::string& str)
-{
-	for (char const& c : str)
-	{
-		if (std::isdigit(c) == 0) return false;
-	}
-	return true;
-}
-
-wchar_t* GlobalFunctions::GetUnicodeCharacter(LPARAM lParam, KBDLLHOOKSTRUCT kbdStruct)
-{
-	// KeyBoardState BYTE array
-	BYTE KeyboardState[256] = {};
-
-	// UnicodeCharacter output from ToUnicodeEx
-	wchar_t UnicodeCharacter[3] = {};
-
-	// Get keystate from Shift and alt when getting keyboardstate
-	GetKeyState(VK_SHIFT);
-	GetKeyState(VK_MENU);
-	GetKeyboardState(KeyboardState);
-
-	// Get the key hit while taking into account the modifiers (shift+5 -> %)
-	ToUnicodeEx((UINT)kbdStruct.vkCode,
-				(UINT)kbdStruct.scanCode,
-				KeyboardState, 
-				UnicodeCharacter,
-				sizeof(UnicodeCharacter) / sizeof(*UnicodeCharacter) - 1,
-				(UINT)kbdStruct.flags,
-				GetKeyboardLayout(0));
-
-	return UnicodeCharacter;
-}
-
-std::wstring GlobalFunctions::to_wstring(const std::string& str)
-{
-	if (str.empty()) return std::wstring();
-	int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
-	std::wstring wstrTo(size_needed, 0);
-	MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
-	return wstrTo;
-}
-
-std::string GlobalFunctions::to_string(const std::wstring& wstr)
-{
-	if (wstr.empty()) return std::string();
-	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
-	std::string strTo(size_needed, 0);
-	WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], size_needed, NULL, NULL);
-	return strTo;
-}
-
-void GlobalFunctions::ShowCaret(bool showFlag)
-{
-	HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	CONSOLE_CURSOR_INFO     cursorInfo;
-
-	GetConsoleCursorInfo(out, &cursorInfo);
-	cursorInfo.bVisible = showFlag; // set the cursor visibility
-	SetConsoleCursorInfo(out, &cursorInfo);
-}
-#pragma endregion
-
 #pragma region Settings Region
 DynamicMenu SettingsClass::SettingsMenu = DynamicMenu(L"Settings", false, false, true);
 
@@ -126,7 +35,7 @@ void SettingsClass::QuitAndSave()
 
 void SettingsClass::ApplyChanges()
 {
-	GlobalFunctions::ShowCaret(ShowCaret);
+	GlobalFunction::ShowCaret(ShowCaret);
 }
 #pragma endregion
 
@@ -142,7 +51,7 @@ void EquationClass::RemovePreviousCharacter()
 
 	if (EquationClass::InputStorageArray.ArrayIndexPointer > 0)
 	{
-		NewCoord = { (SHORT)(GlobalFunctions::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GlobalFunctions::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y }; // create new coord with x-1 and same y
+		NewCoord = { (SHORT)(GlobalFunction::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GlobalFunction::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y }; // create new coord with x-1 and same y
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // use new coord
 		wprintf(L" "); // delete character
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // go back 1 space
@@ -155,9 +64,9 @@ void EquationClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 {
 	EquationClass::Enabled = false; // "disable" hook
 
-	GlobalFunctions::clear_screen();
+	GlobalFunction::clear_screen();
 
-	double EquationDoubleOutput = te_interp(GlobalFunctions::to_string(EquationClass::InputStorageArray.Array).c_str(), 0); // intepret and solve the equation
+	double EquationDoubleOutput = te_interp(GlobalFunction::to_string(EquationClass::InputStorageArray.Array).c_str(), 0); // intepret and solve the equation
 
 	//std::cout << EquationClass::InputStorageArray << " = " << EquationDoubleOutput << "\n"; // display full equation with answer
 
@@ -201,7 +110,7 @@ void AutoSelectClass::RemovePreviousCharacter()
 
 	if (AutoSelectClass::InputStorageArray.ArrayIndexPointer > 0)
 	{
-		NewCoord = { (SHORT)(GlobalFunctions::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GlobalFunctions::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y }; // create new coord with x-1 and same y
+		NewCoord = { (SHORT)(GlobalFunction::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).X - 1), GlobalFunction::GetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE)).Y }; // create new coord with x-1 and same y
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // use new coord
 		wprintf(L" "); // delete character
 		SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), NewCoord); // go back 1 space
@@ -212,7 +121,7 @@ void AutoSelectClass::RemovePreviousCharacter()
 
 void AutoSelectClass::FinishFeature(KBDLLHOOKSTRUCT kbdStruct)
 {
-	GlobalFunctions::clear_screen();
+	GlobalFunction::clear_screen();
 
 	int DirectionCount = 0;
 	std::wstring StrInput = AutoSelectClass::InputStorageArray.GetArray();

@@ -6,6 +6,15 @@ std::wstring LoadingScreen::FontFile = L"Resources\\CustomConsola.ttf";
 
 void LoadingScreen::InitilizeFont()
 {
+#pragma region Change working directory to exe
+	{
+		wchar_t buffer[_MAX_PATH];
+		GetModuleFileName(NULL, buffer, _MAX_PATH);
+
+		std::filesystem::current_path(std::wstring(buffer).substr(0, std::wstring(buffer).find_last_of(L"\\/") + 1));
+	}
+#pragma endregion
+
 #pragma region Extract font from resource
 	std::filesystem::create_directory("Resources"); /* Make Resources Direcory */
 
@@ -121,7 +130,7 @@ void LoadingScreen::KnownProgressLoad()
 		wprintf((std::wstring(((columns / 2) - Lenght / 2), ' ') + bar + L'\n').c_str());
 
 		Sleep(100);
-		LoadingScreen::ClearCurrentLine(SplashScreenYSize);
+		GlobalFunction::clearRanged(SplashScreenYSize, SplashScreenYSize);
 		bar = L"";
 	}
 
@@ -170,7 +179,7 @@ void LoadingScreen::UnknownProgressLoad()
 			sleepTime = ((float)(TrueMid + Difference + 1) / 15) * 50;
 		}
 		Sleep(sleepTime);
-		LoadingScreen::ClearCurrentLine(SplashScreenYSize);
+		GlobalFunction::clearRanged(SplashScreenYSize, SplashScreenYSize);
 	}
 
 	FunctionThread.join();
@@ -180,19 +189,6 @@ void LoadingScreen::ThreadingFunction()
 {
 	(*LoadingFunction)(this);
 	(CrossThreadFinishBoolean) = !(CrossThreadFinishBoolean);
-}
-
-void LoadingScreen::ClearCurrentLine(int Position)
-{
-	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	COORD tl = { 0, (SHORT)(Position) };
-	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
-	DWORD written, cells = csbi.dwSize.X;
-	FillConsoleOutputCharacter(ConsoleHandle, ' ', cells, tl, &written);
-	FillConsoleOutputAttribute(ConsoleHandle, csbi.wAttributes, cells, tl, &written);
-	SetConsoleCursorPosition(ConsoleHandle, tl);
 }
 
 std::wstring LoadingScreen::MoveRight(std::wstring* string)

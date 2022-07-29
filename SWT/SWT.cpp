@@ -10,6 +10,7 @@
 #include <io.h>
 #include <fcntl.h>
 
+#include "GlobalFunction/GlobalFunction.h"
 #include "./Features/Features.h"
 #include "DynamicArray/DynamicArray.h"
 #include "ImprovedDynamicMenu/DynamicMenu.h"
@@ -39,7 +40,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 		case WM_KEYDOWN:
 			// Pointer to UnicodeCharacter Array
 			wchar_t UnicodeCharacter[3] = {};
-			*UnicodeCharacter = *GlobalFunctions::GetUnicodeCharacter(lParam, kbdStruct);
+			*UnicodeCharacter = *GlobalFunction::GetUnicodeCharacter(lParam, kbdStruct);
 
 			switch(UnicodeCharacter[0])
 			{
@@ -101,7 +102,7 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 		case WM_KEYDOWN:
 			// Pointer to UnicodeCharacter Array
 			wchar_t UnicodeCharacter[3] = {};
-			*UnicodeCharacter = *GlobalFunctions::GetUnicodeCharacter(lParam, kbdStruct);
+			*UnicodeCharacter = *GlobalFunction::GetUnicodeCharacter(lParam, kbdStruct);
 
 			switch (UnicodeCharacter[0])
 			{
@@ -137,13 +138,13 @@ LRESULT CALLBACK HookCallback(int nCode, WPARAM wParam, LPARAM lParam)
 		{
 		case WM_KEYUP:
 			wchar_t UnicodeCharacter[3] = {};
-			*UnicodeCharacter = *GlobalFunctions::GetUnicodeCharacter(lParam, kbdStruct);
+			*UnicodeCharacter = *GlobalFunction::GetUnicodeCharacter(lParam, kbdStruct);
 
 			switch (UnicodeCharacter[0])
 			{
 			case 'h':
 			case 'H':
-				GlobalFunctions::clear_screen();
+				GlobalFunction::clear_screen();
 				std::wcout << LR"(COMMANDS:
 ctrl + alt + shift + k - Value Calculation Mode
 ctrl + alt + shift + L - Auto Select Mode
@@ -221,6 +222,7 @@ int main()
 	basic.StartLoading();
 #pragma endregion
 
+	GlobalFunction::clear_screen();
 
 	wprintf(LR"(
                           ████████                ███████
@@ -280,7 +282,7 @@ Begin by pressing h)");
 
 				EquationClass::Enabled = !EquationClass::Enabled;
 
-				GlobalFunctions::clear_screen();
+				GlobalFunction::clear_screen();
 
 				if (EquationClass::Enabled)
 				{
@@ -298,7 +300,7 @@ Begin by pressing h)");
 
 				AutoSelectClass::Enabled = !AutoSelectClass::Enabled;
 
-				GlobalFunctions::clear_screen();
+				GlobalFunction::clear_screen();
 
 				if (AutoSelectClass::Enabled)
 				{
@@ -313,11 +315,11 @@ Begin by pressing h)");
 			case SettingsHK:
 			{
 				ReleaseHook();
-				GlobalFunctions::clear_screen();
+				GlobalFunction::clear_screen();
 
 				SettingsClass::SettingsMenu.StartMenu();
 				
-				GlobalFunctions::clear_screen();
+				GlobalFunction::clear_screen();
 				SetHook();
 				break;
 			}

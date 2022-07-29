@@ -8,6 +8,7 @@
 #include <thread>
 
 #include "../Resource/resource.h"
+#include "../GlobalFunction/GlobalFunction.h"
 
 class LoadingScreen
 {
@@ -31,7 +32,6 @@ private:
 public:
 	static void InitilizeFont();
 	static void TerminateFont();
-	static void ClearCurrentLine(int Position);
 
 	enum LoadType
 	{
